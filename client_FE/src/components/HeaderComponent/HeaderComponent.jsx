@@ -34,7 +34,7 @@ const HeaderComponent = () => {
                 <Button className="w-12 h-10 hidden sm:inline" color={'gray'} pill>
                     <FaMoon />
                 </Button>
-                <Button gradientDuoTone="purpleToBlue" onClick={() => navigate('/sign-in')}>
+                <Button gradientDuoTone="purpleToBlue" outline onClick={() => navigate('/sign-in')}>
                     Đăng nhập
                 </Button>
                 <Navbar.Toggle />
