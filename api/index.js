@@ -9,6 +9,17 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(express.json());
+
+app.use((error, req, res, next) => {
+  const status = error.status || 400;
+  const message = error.message || "Internal Server Error";
+  res.status(status).json({
+    status: status,
+    success: false,
+    message,
+  });
+});
+
 routes(app);
 
 mongoose
