@@ -6,7 +6,6 @@ import { FaMoon } from 'react-icons/fa';
 const HeaderComponent = () => {
     const navigate = useNavigate();
     const path = useLocation().pathname;
-    console.log('Loading', path);
 
     return (
         <Navbar className="border-b-2">
