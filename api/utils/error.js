@@ -6,12 +6,3 @@ export const customErrorHandler = (res, statusCode, message) => {
     message: message,
   });
 };
-// utils/customSuccessHandler.js
-export const customSuccessHandler = (res, statusCode, message, data = {}) => {
-  return res.status(statusCode).json({
-    status: "OK",
-    success: true,
-    message: message,
-    data: data, // Dữ liệu trả về (nếu có)
-  });
-};
