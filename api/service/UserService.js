@@ -59,8 +59,12 @@ const signInUser = async (userData, res) => {
       status: "OK",
       success: true,
       message: "Đăng nhập thành công",
-      validUser: rest, // Trả về thông tin người dùng đã loại bỏ password
-      access_token: access_token,
+      validUser: {
+        user: {
+          ...rest, // Giữ lại các thông tin từ đối tượng rest
+          access_token: access_token, // Thêm access_token vào bên trong đối tượng user
+        },
+      }, // Trả về thông tin người dùng đã loại bỏ password
     };
   } catch (error) {
     return {

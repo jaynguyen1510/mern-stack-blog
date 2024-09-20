@@ -5,7 +5,7 @@ import useSignIn from '../Hooks/useSignIn';
 
 import { Alert, Label } from 'flowbite-react';
 import { useNavigate } from 'react-router-dom';
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const SignInPage = () => {
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ const SignInPage = () => {
         password: '',
     });
 
-    const { signIn, message, error, isLoading } = useSignIn();
+    const { signIn, isLoading, error, message } = useSignIn();
 
     const handleOnChange = useCallback(
         (e) => {
@@ -27,12 +27,11 @@ const SignInPage = () => {
     const handleSubmitForm = async (e) => {
         e.preventDefault();
         if (!formData.email || !formData.password) {
-            return setErrorMessage('Vui lòng nhập đầy đủ thông tin');
+            return setErrorMessage('Vui lòng nhập đầy đủ thông tin'); // Nếu thiếu thông tin thì không thực hiện đăng nhập
         }
-        setErrorMessage(''); // Reset error message before signIn up
-        await signIn(formData);
+        setErrorMessage(null);
+        await signIn(formData); // Gọi hàm signIn từ hook
     };
-
     // Tự động tắt thông báo sau 5 giây
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -41,7 +40,6 @@ const SignInPage = () => {
 
         return () => clearTimeout(timer); // Dọn dẹp timer khi component unmount
     }, [errorMessage, message]); // Chạy lại khi errorMessage hoặc message thay đổi
-
     return (
         <div className="min-h-screen mt-40">
             <div className="flex p-3 max-w-5xl mx-auto flex-col md:flex-row md:items-center gap-5">
@@ -101,12 +99,13 @@ const SignInPage = () => {
                             Đăng ký tài khoản
                         </span>
                     </div>
-                    {/* Hiển thị thông báo */}
+                    {/* Hiển thị thông báo thành công */}
                     {message && (
                         <Alert className="mt-4 p-3 bg-green-100 border border-green-500 text-green-700 rounded">
                             {message}
                         </Alert>
                     )}
+                    {/* Hiển thị thông báo lỗi */}
                     {(error || errorMessage) && (
                         <Alert className="mt-5 p-3 bg-red-100 border border-red-500 text-red-700 rounded">
                             {error || errorMessage}

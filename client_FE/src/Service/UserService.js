@@ -12,7 +12,7 @@ export const signUpUser = async (data) => {
     }
 };
 
-export const sigInUser = async (data) => {
+export const signInUser = async (data) => {
     console.log('data', data);
     try {
         const res = await axios.post(`${apiUrl}/user/sign-in`, data);
