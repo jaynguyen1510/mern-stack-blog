@@ -24,16 +24,9 @@ const createUser = async (req, res, next) => {
 };
 
 const signInUser = async (req, res) => {
-  const { userName, email, password } = req.body;
+  const { email, password } = req.body;
   // Kiểm tra dữ liệu đầu vào
-  if (
-    !userName ||
-    !email ||
-    !password ||
-    userName == null ||
-    email === null ||
-    password === null
-  ) {
+  if (!email || !password || email === null || password === null) {
     return customErrorHandler(
       res,
       400,

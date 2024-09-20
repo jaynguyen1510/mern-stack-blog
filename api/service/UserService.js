@@ -33,9 +33,9 @@ const createUserService = async (userData) => {
   }
 };
 const signInUser = async (userData, res) => {
-  const { userName, email, password } = userData;
+  const { email, password } = userData;
   try {
-    const validUser = await User.findOne({ userName: userName, email: email });
+    const validUser = await User.findOne({ email: email });
     if (!validUser) {
       return {
         status: "ERR",
@@ -60,6 +60,7 @@ const signInUser = async (userData, res) => {
       success: true,
       message: "Đăng nhập thành công",
       validUser: rest, // Trả về thông tin người dùng đã loại bỏ password
+      access_token: access_token,
     };
   } catch (error) {
     return {

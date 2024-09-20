@@ -7,7 +7,18 @@ export const signUpUser = async (data) => {
         const res = await axios.post(`${apiUrl}/user/sign-up`, data);
         return res.data; // Trả về dữ liệu từ response
     } catch (error) {
-        console.error('Error signing up user:', error);
+        console.error('Error sign up user:', error);
+        throw error;
+    }
+};
+
+export const sigInUser = async (data) => {
+    console.log('data', data);
+    try {
+        const res = await axios.post(`${apiUrl}/user/sign-in`, data);
+        return res.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.error('Error sign in user:', error);
         throw error;
     }
 };
