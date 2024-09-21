@@ -26,7 +26,7 @@ const useSignIn = () => {
                 dispatch(signInUserSuccess(response));
                 timer = setTimeout(() => {
                     navigate('/'); // Điều hướng sau khi đăng nhập thành công
-                }, 3000); // Thời gian chờ để điều hướng
+                }, 1000); // Thời gian chờ để điều hướng
             } else if (response.status === 'ERR') {
                 dispatch(signInFailure(response)); // Thông báo lỗi đăng nhập
             }

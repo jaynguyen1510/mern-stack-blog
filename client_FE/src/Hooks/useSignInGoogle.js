@@ -21,7 +21,7 @@ const useSignInGoogle = () => {
                 const timeoutId = setTimeout(() => {
                     dispatch(resetMessage());
                     navigate('/'); // Điều hướng sau khi reset message
-                }, 3000);
+                }, 1000);
 
                 // Dọn dẹp timeout khi component unmount
                 return () => clearTimeout(timeoutId);

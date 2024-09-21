@@ -25,7 +25,7 @@ const useSignUp = () => {
                 setMessage(response.message);
                 timer = setTimeout(() => {
                     navigate('/sign-in');
-                }, 3000); // Thay đổi thời gian nếu cần
+                }, 1000); // Thay đổi thời gian nếu cần
             } else if (response.status === 'ERR' && response.success === false) {
                 setError(response.message);
             }
