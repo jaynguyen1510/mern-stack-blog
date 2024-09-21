@@ -1,12 +1,22 @@
-import { Button, Navbar, TextInput } from 'flowbite-react';
+import { Avatar, Button, Dropdown, Navbar, TextInput } from 'flowbite-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeUserCurrent } from '../../redux/Slice/userSlice';
 
 const HeaderComponent = () => {
     const navigate = useNavigate();
-    const path = useLocation().pathname;
+    const dispatch = useDispatch();
+    const { currentUser } = useSelector((state) => state.user);
 
+    const path = useLocation().pathname;
+    const handleLogOut = () => {
+        console.log('Logging out...'); // Kiểm tra xem sự kiện này có được gọi
+        dispatch(removeUserCurrent());
+        console.log('Current user after logout:', currentUser); // Kiểm tra giá trị currentUser sau khi dispatch
+        navigate('/');
+    };
     return (
         <Navbar className="border-b-2">
             <div
@@ -33,9 +43,26 @@ const HeaderComponent = () => {
                 <Button className="w-12 h-10 hidden sm:inline" color={'gray'} pill>
                     <FaMoon />
                 </Button>
-                <Button gradientDuoTone="purpleToBlue" outline onClick={() => navigate('/sign-in')}>
-                    Đăng nhập
-                </Button>
+                {currentUser ? (
+                    // Nếu currentUser tồn tại, hiển thị một thành phần nào đó, ví dụ:
+                    <Dropdown arrowIcon={false} inline label={<Avatar alt="user" img={currentUser?.avatar} rounded />}>
+                        <Dropdown.Header onClick={() => navigate('/dashboard?tab=profile')}>
+                            <div className="cursor-pointer">
+                                <span className="block text-sm">Xin chào</span>
+                                <span className="block text-sm font-bold text-blue-500 hover:text-orange-700 hover:shadow-lg transition duration-300">
+                                    {currentUser?.userName}
+                                </span>
+                            </div>
+                        </Dropdown.Header>
+                        <Dropdown.Item onClick={handleLogOut}>Đăng xuất</Dropdown.Item>
+                    </Dropdown>
+                ) : (
+                    // Nếu không có currentUser, hiển thị nút Đăng nhập
+                    <Button gradientDuoTone="purpleToBlue" outline onClick={() => navigate('/sign-in')}>
+                        Đăng nhập
+                    </Button>
+                )}
+
                 <Navbar.Toggle />
             </div>
             <Navbar.Collapse>

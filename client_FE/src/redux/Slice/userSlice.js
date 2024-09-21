@@ -35,8 +35,14 @@ const userSlice = createSlice({
         resetError: (state) => {
             state.error = null;
         },
+        removeUserCurrent(state) {
+            state.currentUser = null;
+            state.isLoading = false;
+            state.error = null;
+        },
     },
 });
 
-export const { signInUserStart, signInUserSuccess, signInFailure, resetMessage, resetError } = userSlice.actions;
+export const { signInUserStart, signInUserSuccess, signInFailure, resetMessage, resetError, removeUserCurrent } =
+    userSlice.actions;
 export default userSlice.reducer;
