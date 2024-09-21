@@ -16,8 +16,14 @@ const userSlice = createSlice({
         },
         signInUserSuccess: (state, action) => {
             state.isLoading = false;
-            state.currentUser = action.payload.validUser.user; // Giữ user
-            state.message = action.payload.message;
+            // Kiểm tra sự tồn tại của các thuộc tính
+            const user = action.payload.validUser?.user || action.payload.userGoogle?.user;
+            if (user) {
+                state.currentUser = user;
+                state.message = action.payload.message;
+            } else {
+                console.error('Không tìm thấy user trong payload:', action.payload);
+            }
         },
         signInFailure: (state, action) => {
             state.isLoading = false;

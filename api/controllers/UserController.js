@@ -54,4 +54,25 @@ const signInUser = async (req, res) => {
   }
 };
 
-export default { createUser, signInUser };
+const signInGoogle = async (req, res) => {
+  const { userName, email, avatar } = req.body;
+
+  // Kiểm tra dữ liệu đầu vào
+  if (!userName || !email || !avatar) {
+    return res.status(400).json({ message: "Thiếu thông tin cần thiết." });
+  }
+  try {
+    // Gọi service để tạo người dùng
+    const response = await UserService.signInGoogle(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    // Xử lý lỗi từ service
+    return customErrorHandler(
+      res,
+      500,
+      error.message || "Đã xảy ra lỗi khi tạo người dùng."
+    );
+  }
+};
+
+export default { createUser, signInUser, signInGoogle };

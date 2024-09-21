@@ -6,6 +6,7 @@ import useSignIn from '../Hooks/useSignIn';
 import { Alert, Label } from 'flowbite-react';
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
+import OAuthComponent from '../components/OAuthComponent/OAuthComponent';
 
 const SignInPage = () => {
     const navigate = useNavigate();
@@ -89,6 +90,7 @@ const SignInPage = () => {
                                 'Đăng nhập'
                             )}
                         </ButtonComponent>
+                        <OAuthComponent />
                     </form>
                     <div className="flex gap-2 text-sm mt-5">
                         <span>Bạn chưa có tài khoản?</span>

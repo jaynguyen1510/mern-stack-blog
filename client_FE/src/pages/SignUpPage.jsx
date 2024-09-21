@@ -2,6 +2,7 @@ import InputComponent from '../components/InputComponent/InputComponent';
 import ButtonComponent from '../components/ButtonComponent/ButtonComponent';
 import LoadingComponent from '../components/LoadingComponent/LoadingComponent';
 import useSignUp from '../Hooks/useSignUp';
+import OAuthComponent from '../components/OAuthComponent/OAuthComponent';
 
 import { Alert, Label } from 'flowbite-react';
 import { useNavigate } from 'react-router-dom';
@@ -102,6 +103,7 @@ const SignUpPage = () => {
                                 'Đăng ký'
                             )}
                         </ButtonComponent>
+                        <OAuthComponent />
                     </form>
                     <div className="flex gap-2 text-sm mt-5">
                         <span>Bạn đã có tài khoản?</span>

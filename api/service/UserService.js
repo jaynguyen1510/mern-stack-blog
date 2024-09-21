@@ -74,4 +74,62 @@ const signInUser = async (userData, res) => {
     };
   }
 };
-export default { createUserService, signInUser };
+
+const signInGoogle = async (userData) => {
+  const { userName, email, avatar } = userData;
+  try {
+    const userGoogle = await User.findOne({ email });
+    if (userGoogle) {
+      const access_token = await jwtService.generalAccessToken({
+        id: userGoogle._id,
+      });
+      const { password, ...rest } = userGoogle._doc;
+      return {
+        status: "OK",
+        success: true,
+        message: "Đăng nhập thành công",
+        userGoogle: {
+          user: {
+            ...rest, // Giữ lại các thông tin từ đối tượng rest
+            access_token: access_token, // Thêm access_token vào bên trong đối tượng user
+          },
+        }, // Trả về thông tin người dùng đã loại bỏ password
+      };
+    } else {
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptJs.hashSync(generatedPassword, 10);
+      const newUser = new User({
+        userName,
+        email,
+        password: hashedPassword,
+        avatar,
+      });
+
+      await newUser.save();
+      const access_token = await jwtService.generalAccessToken({
+        id: newUser._id,
+      });
+      const { password, ...rest } = newUser._doc;
+      return {
+        status: "OK",
+        success: true,
+        message: "Đăng nhập thành công",
+        userGoogle: {
+          user: {
+            ...rest, // Giữ lại các thông tin từ đối tượng rest
+            access_token: access_token, // Thêm access_token vào bên trong đối tượng user
+          },
+        }, // Trả về thông tin người dùng đã loại bỏ password
+      };
+    }
+  } catch (error) {
+    return {
+      status: "ERR",
+      success: false,
+      message: error.message || "Lỗi khi tạo người dùng",
+    };
+  }
+};
+export default { createUserService, signInUser, signInGoogle };

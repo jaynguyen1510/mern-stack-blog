@@ -22,3 +22,13 @@ export const signInUser = async (data) => {
         throw error;
     }
 };
+
+export const signInGoogle = async (data) => {
+    try {
+        const res = await axios.post(`${apiUrl}/user/google`, data);
+        return res.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.error('Error sign in user:', error);
+        throw error;
+    }
+};
