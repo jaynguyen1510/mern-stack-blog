@@ -24,8 +24,8 @@ const useSignIn = () => {
             if (response.status === 'OK' && response.success === true) {
                 dispatch(signInUserSuccess(response));
                 timer = setTimeout(() => {
-                    if (error) dispatch(resetError()); // Reset error sau 3 giây
-                    if (message) dispatch(resetMessage()); // Reset message sau 3 giây
+                    dispatch(resetError()); // Reset error
+                    dispatch(resetMessage()); // Reset message
                     navigate('/'); // Điều hướng sau khi đăng nhập thành công
                 }, 1000); // Thời gian chờ để điều hướng
             } else if (response.status === 'ERR') {

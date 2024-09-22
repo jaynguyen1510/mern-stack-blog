@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import HeaderComponent from '../components/HeaderComponent/HeaderComponent';
 import FooterComponent from '../components/FooterComponent/FooterComponent';
+import PrivateDashBoard from '../components/PrivateDashBoard/PrivateDashBoard';
 
 // Sử dụng lazy loading cho các trang
 const HomePage = lazy(() => import('./../pages/HomePage'));
@@ -19,7 +20,9 @@ export default function App() {
             <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/dashboard" element={<Dasboard />} />
+                    <Route element={<PrivateDashBoard />}>
+                        <Route path="/dashboard" element={<Dasboard />} />
+                    </Route>
                     <Route path="/about" element={<About />} />
                     <Route path="/sign-in" element={<SignInPage />} />
                     <Route path="/sign-up" element={<SignUpPage />} />
