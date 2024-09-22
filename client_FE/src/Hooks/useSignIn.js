@@ -1,5 +1,4 @@
 import * as UserService from '../Service/UserService';
-import { useEffect } from 'react';
 import { useMutationCustomHook } from './useMutationCustom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,6 +24,8 @@ const useSignIn = () => {
             if (response.status === 'OK' && response.success === true) {
                 dispatch(signInUserSuccess(response));
                 timer = setTimeout(() => {
+                    if (error) dispatch(resetError()); // Reset error sau 3 giây
+                    if (message) dispatch(resetMessage()); // Reset message sau 3 giây
                     navigate('/'); // Điều hướng sau khi đăng nhập thành công
                 }, 1000); // Thời gian chờ để điều hướng
             } else if (response.status === 'ERR') {
@@ -40,18 +41,6 @@ const useSignIn = () => {
             if (timer) clearTimeout(timer);
         };
     };
-
-    // Tự động xóa thông báo lỗi/message sau 3 giây
-    useEffect(() => {
-        if (error || message) {
-            const timer = setTimeout(() => {
-                if (error) dispatch(resetError()); // Reset error sau 3 giây
-                if (message) dispatch(resetMessage()); // Reset message sau 3 giây
-            }, 3000);
-
-            return () => clearTimeout(timer);
-        }
-    }, [error, message, dispatch]);
 
     return { signIn, isLoading, error, message };
 };

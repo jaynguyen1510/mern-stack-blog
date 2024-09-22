@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { store, persistor } from './redux/store'; // Import cả store và persistor
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'; // Import PersistGate
+import ThemeProvider from './components/ThemeComponent/ThemeComponent';
 
 // Tạo một QueryClient instance
 const queryClient = new QueryClient();
@@ -15,7 +16,9 @@ createRoot(document.getElementById('root')).render(
     <QueryClientProvider client={queryClient}>
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-                <App />
+                <ThemeProvider>
+                    <App />
+                </ThemeProvider>
             </PersistGate>
         </Provider>
     </QueryClientProvider>,

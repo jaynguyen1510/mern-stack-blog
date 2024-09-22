@@ -39,6 +39,7 @@ const userSlice = createSlice({
             state.currentUser = null;
             state.isLoading = false;
             state.error = null;
+            state.message = null;
         },
     },
 });

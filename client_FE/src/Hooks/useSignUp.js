@@ -42,7 +42,7 @@ const useSignUp = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             setError(null);
-        }, 3000); // Thay đổi thời gian tại đây nếu cần
+        }, 1000); // Thay đổi thời gian tại đây nếu cần
 
         return () => clearTimeout(timer); // Dọn dẹp timer khi component unmount
     }, [error, message]); // Chạy lại khi error hoặc message thay đổi
