@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    currentUser: null,
+    currentUser: '',
     isLoading: false,
     error: null,
     message: null,
@@ -36,7 +36,7 @@ const userSlice = createSlice({
             state.error = null;
         },
         removeUserCurrent(state) {
-            state.currentUser = null;
+            state.currentUser = '';
             state.isLoading = false;
             state.error = null;
             state.message = null;
