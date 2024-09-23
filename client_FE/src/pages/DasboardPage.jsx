@@ -5,7 +5,6 @@ import DashBoardProfileComponent from '../components/DashBoardProfileComponent/D
 
 const Dasboard = () => {
     const location = useLocation();
-    console.log('location', location);
     const [tab, setTab] = useState('');
 
     // lấy thông tin URL thuộc tính của tab?=profile or tab?=test

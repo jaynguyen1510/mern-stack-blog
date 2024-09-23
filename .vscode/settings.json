@@ -1,6 +1,7 @@
 {
-    "editor.formatOnSave": true,
-    "cSpell.autoFormatConfigFile": true,
-    "autoprefixer.formatOnSave": true,
-    "notebook.formatOnSave.enabled": true
+  "editor.formatOnSave": true,
+  "cSpell.autoFormatConfigFile": true,
+  "autoprefixer.formatOnSave": true,
+  "notebook.formatOnSave.enabled": true,
+  "cSpell.words": ["defaultvalue"]
 }
