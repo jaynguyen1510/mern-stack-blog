@@ -132,4 +132,28 @@ const signInGoogle = async (userData) => {
     };
   }
 };
-export default { createUserService, signInUser, signInGoogle };
+
+const updateUser = async (userData) => {
+  const updatedUser = await User.findByIdAndUpdate(
+    userData.userId,
+    {
+      $set: {
+        userName: userData.userName,
+        email: userData.email,
+        avatar: userData.avatar,
+        password: userData.password,
+      },
+    },
+    { new: true }
+  );
+  const { password, ...rest } = updatedUser._doc;
+  return {
+    status: "OK",
+    success: true,
+    message: "Cập nhật thông tin thành công",
+    user: {
+      ...rest, // Giữ lại các thông tin từ đối tượng rest
+    }, // Trả về thông tin người dùng đã loại bỏ password
+  };
+};
+export default { createUserService, signInUser, signInGoogle, updateUser };
