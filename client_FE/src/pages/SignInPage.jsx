@@ -33,7 +33,7 @@ const SignInPage = () => {
         setErrorMessage(null);
         await signIn(formData); // Gọi hàm signIn từ hook
     };
-    // Tự động tắt thông báo sau 5 giây
+    // Tự động tắt thông báo sau 3 giây
     useEffect(() => {
         const timer = setTimeout(() => {
             setErrorMessage(null);

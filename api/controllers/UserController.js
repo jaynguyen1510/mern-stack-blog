@@ -97,15 +97,15 @@ const updateUser = async (req, res, next) => {
   if (req.user.id !== req.params.userId) {
     return res
       .status(403)
-      .json({ status: "OK", message: "Không có quyền được sửa" });
+      .json({ status: "ERR", message: "Không có quyền được sửa" });
   }
 
   // Check and hash password if provided
   if (req.body.password) {
     if (req.body.password.length < 6) {
       return res
-        .status(400)
-        .json({ status: "OK", message: "Mật khẩu phải có ít nhất 6 ký tự" });
+        .status(200)
+        .json({ status: "ERR", message: "Mật khẩu phải có ít nhất 6 ký tự" });
     }
     req.body.password = await bcryptjs.hash(req.body.password, 10); // Hash the password
   }
@@ -113,25 +113,25 @@ const updateUser = async (req, res, next) => {
   // Check userName
   if (req.body.userName) {
     if (req.body.userName.length < 7 || req.body.userName.length > 20) {
-      return res.status(400).json({
-        status: "OK",
+      return res.status(200).json({
+        status: "ERR",
         message: "Tài khoản ít nhất 7 ký tự và 20 ký tự trở xuống",
       });
     }
     if (req.body.userName.includes(" ")) {
       return res
-        .status(400)
-        .json({ status: "OK", message: "Tài khoản không chứa khoảng trống" });
+        .status(200)
+        .json({ status: "ERR", message: "Tài khoản không chứa khoảng trống" });
     }
     if (req.body.userName !== req.body.userName.toLowerCase()) {
       return res
-        .status(400)
-        .json({ status: "OK", message: "Tài khoản chỉ chứa chữ cái và số" });
+        .status(200)
+        .json({ status: "ERR", message: "Tài khoản chỉ chứa chữ cái và số" });
     }
     if (!/^[a-zA-Z0-9]+$/.test(req.body.userName)) {
       return res
-        .status(400)
-        .json({ status: "OK", message: "Tài khoản chỉ chứa chữ cái và số" });
+        .status(200)
+        .json({ status: "ERR", message: "Tài khoản chỉ chứa chữ cái và số" });
     }
   }
 

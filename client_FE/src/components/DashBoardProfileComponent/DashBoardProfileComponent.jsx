@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert } from 'flowbite-react';
 import { updateError } from '../../redux/Slice/userSlice';
 import useUpdateUser from '../../Hooks/useUpdateUser';
+import LoadingComponent from '../LoadingComponent/LoadingComponent';
 
 const DashBoardProfileComponent = () => {
     const { uploadImage, uploadProgress, imageUrl, uploadError, fromData } = useUploadImage();
@@ -14,8 +15,7 @@ const DashBoardProfileComponent = () => {
     const [selectImage, setSelectImage] = useState(null);
     const [imageUrlSelected, setImageUrlSelected] = useState(currentUser?.avatar);
     const [dataFormSelected, setDataFormSelected] = useState({});
-    const { updateUser, success, error } = useUpdateUser();
-    const [successMessage, setSuccess] = useState(null);
+    const { updateUser, success, isLoading, error, message } = useUpdateUser();
 
     const dispatch = useDispatch();
     const fileInputRef = useRef();
@@ -58,23 +58,6 @@ const DashBoardProfileComponent = () => {
             dispatch(updateError(error.message));
         }
     };
-
-    useEffect(() => {
-        // Reset success message after some time
-        if (success) {
-            setSuccess(success);
-            const timer = setTimeout(() => setSuccess(null), 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [success]);
-
-    useEffect(() => {
-        // Reset error message after some time
-        if (error) {
-            const timer = setTimeout(() => dispatch(updateError(null)), 5000);
-            return () => clearTimeout(timer);
-        }
-    }, [error]);
 
     return (
         <div className="max-w-lg mx-auto p-3 w-full">
@@ -131,12 +114,17 @@ const DashBoardProfileComponent = () => {
                 <InputComponent id="password" type="password" placeholder="password" onChange={handleChangeProfile} />
 
                 <ButtonComponent type={'submit'} gradientDuoTone="purpleToBlue" outline>
-                    <span>Cập nhật</span>
+                    {isLoading ? (
+                        <LoadingComponent isLoading={isLoading}>Vui lòng chờ...</LoadingComponent>
+                    ) : (
+                        'Cập nhật'
+                    )}
                 </ButtonComponent>
-                {successMessage && (
-                    <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
-                        {successMessage}
-                    </div>
+                {/* Hiển thị thông báo thành công */}
+                {message && success && (
+                    <Alert className="mt-4 p-3 bg-green-100 border border-green-500 text-green-700 rounded">
+                        {message}
+                    </Alert>
                 )}
             </form>
             {uploadError && (
@@ -145,11 +133,8 @@ const DashBoardProfileComponent = () => {
                 </Alert>
             )}
 
-            {error && (
-                <Alert color="failure" className="mt-3 text-center">
-                    <span>{error}</span> {/* Display error message */}
-                </Alert>
-            )}
+            {/* Hiển thị thông báo lỗi */}
+            {error && <Alert className="mt-5 p-3 bg-red-100 border border-red-500 text-red-700 rounded">{error}</Alert>}
 
             <div className="text-red-500 flex justify-between mt-5">
                 <span className="cursor-pointer">Hủy tài khoản</span>
