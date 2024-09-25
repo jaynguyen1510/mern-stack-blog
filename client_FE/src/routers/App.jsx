@@ -14,22 +14,24 @@ const ProjectPage = lazy(() => import('./../pages/ProjectPage'));
 
 export default function App() {
     return (
-        <BrowserRouter>
-            <HeaderComponent />
-            {/* Sử dụng Suspense để hiển thị loading khi đang tải component */}
-            <Suspense fallback={<div>Loading...</div>}>
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route element={<PrivateDashBoard />}>
-                        <Route path="/dashboard" element={<Dasboard />} />
-                    </Route>
-                    <Route path="/about" element={<About />} />
-                    <Route path="/sign-in" element={<SignInPage />} />
-                    <Route path="/sign-up" element={<SignUpPage />} />
-                    <Route path="/project-page" element={<ProjectPage />} />
-                </Routes>
-            </Suspense>
-            <FooterComponent />
-        </BrowserRouter>
+        <>
+            <BrowserRouter>
+                <HeaderComponent />
+                {/* Sử dụng Suspense để hiển thị loading khi đang tải component */}
+                <Suspense fallback={<div>Loading...</div>}>
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route element={<PrivateDashBoard />}>
+                            <Route path="/dashboard" element={<Dasboard />} />
+                        </Route>
+                        <Route path="/about" element={<About />} />
+                        <Route path="/sign-in" element={<SignInPage />} />
+                        <Route path="/sign-up" element={<SignUpPage />} />
+                        <Route path="/project-page" element={<ProjectPage />} />
+                    </Routes>
+                </Suspense>
+                <FooterComponent />
+            </BrowserRouter>
+        </>
     );
 }

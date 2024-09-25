@@ -1,12 +1,11 @@
 import { Sidebar } from 'flowbite-react';
 import { HiArrowSmRight, HiUser } from 'react-icons/hi';
-import { useDispatch } from 'react-redux';
-import { removeUserCurrent } from '../../redux/Slice/userSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import useLogOut from '../../Hooks/useLogOut';
 const DashBoardSidebarComponent = () => {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const logout = useLogOut();
     const location = useLocation();
     const [tab, setTab] = useState('');
 
@@ -20,8 +19,7 @@ const DashBoardSidebarComponent = () => {
     }, [location.search]);
 
     const handleLogOut = () => {
-        dispatch(removeUserCurrent());
-        navigate('/');
+        logout();
     };
 
     return (

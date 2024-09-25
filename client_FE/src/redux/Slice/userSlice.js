@@ -35,6 +35,26 @@ const userSlice = createSlice({
         resetError: (state) => {
             state.error = null;
         },
+        updateStart: (state) => {
+            state.isLoading = true;
+            state.error = null;
+        },
+        updateSuccess: (state, action) => {
+            state.isLoading = false;
+            // Kiểm tra sự tồn tại của các thuộc tính
+            const user = action.payload?.user;
+            if (user) {
+                state.currentUser = user;
+                state.message = action.payload.message;
+            } else {
+                console.error('Không tìm thấy user trong payload:', action.payload);
+            }
+            state.error = null;
+        },
+        updateError: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload.message;
+        },
         removeUserCurrent(state) {
             state.currentUser = '';
             state.isLoading = false;
@@ -44,6 +64,15 @@ const userSlice = createSlice({
     },
 });
 
-export const { signInUserStart, signInUserSuccess, signInFailure, resetMessage, resetError, removeUserCurrent } =
-    userSlice.actions;
+export const {
+    signInUserStart,
+    signInUserSuccess,
+    signInFailure,
+    resetMessage,
+    resetError,
+    removeUserCurrent,
+    updateStart,
+    updateSuccess,
+    updateError,
+} = userSlice.actions;
 export default userSlice.reducer;

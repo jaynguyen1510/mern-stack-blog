@@ -8,7 +8,7 @@ const useUploadImage = () => {
     const [uploadProgress, setUploadProgress] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
     const [uploadError, setUploadError] = useState(null);
-
+    const [fromData, setFormData] = useState({});
     const uploadImage = async (file) => {
         setUploadError(null); // Reset error before upload
         try {
@@ -35,6 +35,7 @@ const useUploadImage = () => {
                         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
                         setImageUrl(downloadURL);
                         setUploadProgress(null); // Reset progress after successful upload
+                        setFormData({ ...fromData, avatar: downloadURL }); // Set avatar URL to form data
                     } catch (error) {
                         console.error('Error getting download URL:', error);
                         setUploadError('Không thể lấy URL hình ảnh.');
@@ -47,7 +48,7 @@ const useUploadImage = () => {
         }
     };
 
-    return { uploadImage, uploadProgress, imageUrl, uploadError };
+    return { uploadImage, uploadProgress, imageUrl, uploadError, fromData };
 };
 
 export default useUploadImage;

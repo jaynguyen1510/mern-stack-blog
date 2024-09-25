@@ -41,11 +41,14 @@ const signInUser = async (req, res) => {
     const { validUser } = response;
     const access_token = validUser?.user?.access_token;
     // Xử lý khi đăng nhập thành công
+    console.log("access_token", access_token);
+
     res.cookie("access_token", access_token, {
-      httpOnly: true, // Sửa "HttpOnly" thành "httpOnly"
-      secure: false, // Đặt true nếu bạn đang chạy trên HTTPS
-      sameSite: "strict",
+      httpOnly: true,
+      secure: false, // Đặt true nếu chạy trên HTTPS
+      sameSite: "strict", // Hoặc 'none' nếu cần
     });
+
     return res.status(200).json(response);
   } catch (error) {
     // Xử lý lỗi từ service
@@ -67,6 +70,17 @@ const signInGoogle = async (req, res) => {
   try {
     // Gọi service để tạo người dùng
     const response = await UserService.signInGoogle(req.body);
+    const { userGoogle } = response;
+    const access_token = userGoogle?.user?.access_token;
+    // Xử lý khi đăng nhập thành công
+    console.log("access_token", access_token);
+
+    res.cookie("access_token", access_token, {
+      httpOnly: true,
+      secure: false, // Đặt true nếu chạy trên HTTPS
+      sameSite: "strict", // Hoặc 'none' nếu cần
+    });
+
     return res.status(200).json(response);
   } catch (error) {
     // Xử lý lỗi từ service
@@ -79,53 +93,53 @@ const signInGoogle = async (req, res) => {
 };
 
 const updateUser = async (req, res, next) => {
-  // Kiểm tra quyền truy cập
+  // Check access permissions
   if (req.user.id !== req.params.userId) {
-    return next(customErrorHandler(res, 400, "Không có quyền được sửa"));
+    return res
+      .status(403)
+      .json({ status: "OK", message: "Không có quyền được sửa" });
   }
 
-  // Kiểm tra và mã hóa mật khẩu nếu có
+  // Check and hash password if provided
   if (req.body.password) {
     if (req.body.password.length < 6) {
-      return next(
-        customErrorHandler(res, 400, "Mật khẩu phải có ít nhất 6 ký tự")
-      );
+      return res
+        .status(400)
+        .json({ status: "OK", message: "Mật khẩu phải có ít nhất 6 ký tự" });
     }
-    req.body.password = await bcryptjs.hash(req.body.password, 10); // Mã hóa mật khẩu
+    req.body.password = await bcryptjs.hash(req.body.password, 10); // Hash the password
   }
 
-  // Kiểm tra userName
+  // Check userName
   if (req.body.userName) {
     if (req.body.userName.length < 7 || req.body.userName.length > 20) {
-      return next(
-        customErrorHandler(
-          res,
-          400,
-          "Tài khoản ít nhất 7 ký tự và 20 ký tự trở xuống"
-        )
-      );
+      return res.status(400).json({
+        status: "OK",
+        message: "Tài khoản ít nhất 7 ký tự và 20 ký tự trở xuống",
+      });
     }
     if (req.body.userName.includes(" ")) {
-      return next(
-        customErrorHandler(res, 400, "Tài khoản không chứa khoảng trống")
-      );
+      return res
+        .status(400)
+        .json({ status: "OK", message: "Tài khoản không chứa khoảng trống" });
     }
     if (req.body.userName !== req.body.userName.toLowerCase()) {
-      return next(
-        customErrorHandler(res, 400, "Tài khoản chỉ chứa chữ cái và số")
-      );
+      return res
+        .status(400)
+        .json({ status: "OK", message: "Tài khoản chỉ chứa chữ cái và số" });
     }
     if (!/^[a-zA-Z0-9]+$/.test(req.body.userName)) {
-      return next(
-        customErrorHandler(res, 400, "Tài khoản chỉ chứa chữ cái và số")
-      );
+      return res
+        .status(400)
+        .json({ status: "OK", message: "Tài khoản chỉ chứa chữ cái và số" });
     }
   }
-  // Cập nhật thông tin người dùng vào cơ sở dữ liệu (giả định bạn có model User)
+
+  // Update user information in the database (assuming you have a User model)
   try {
-    const userData = req.body; // Lấy dữ liệu từ body
-    const userId = req.params.userId; // Lấy userId từ params
-    // Kết hợp userId vào userData
+    const userData = req.body; // Get data from body
+    const userId = req.params.userId; // Get userId from params
+    // Combine userId into userData
     const updatedUserData = { userId, ...userData };
 
     const updateUser = await UserService.updateUser(updatedUserData);
@@ -136,4 +150,25 @@ const updateUser = async (req, res, next) => {
     return next(customErrorHandler(res, 500, "Lỗi khi cập nhật người dùng"));
   }
 };
-export default { createUser, signInUser, signInGoogle, updateUser };
+
+const logOutUser = async (req, res, next) => {
+  try {
+    // Xóa cookie 'access_token' bằng cách thiết lập lại với Max-Age=0
+    res.clearCookie("access_token", {
+      httpOnly: true,
+      secure: false, // Đặt true nếu chạy trên HTTPS
+      sameSite: "strict", // Hoặc 'none' nếu cần trên cross-site requests
+      path: "/", // Đảm bảo path là '/' nếu cookie được thiết lập với path này
+      // domain: "localhost", // Không cần nếu cookie không có domain
+    });
+    // Trả về phản hồi thành công
+    res.status(200).json({
+      status: "OK",
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    return next(customErrorHandler(res, 500, "Lỗi khi xóa token"));
+  }
+};
+
+export default { createUser, signInUser, signInGoogle, updateUser, logOutUser };

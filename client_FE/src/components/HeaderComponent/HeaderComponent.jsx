@@ -3,21 +3,20 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeUserCurrent } from '../../redux/Slice/userSlice';
 import { toggleTheme } from '../../redux/Theme/ThemeSlice';
+import useLogOut from '../../Hooks/useLogOut';
 const HeaderComponent = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const logout = useLogOut();
     const { currentUser } = useSelector((state) => state.user);
     const { theme } = useSelector((state) => state.theme);
-    console.log('current user', currentUser?.avatar);
+    console.log('current user', currentUser?.access_token);
 
     const path = useLocation().pathname;
     const handleLogOut = () => {
         console.log('Logging out...'); // Kiểm tra xem sự kiện này có được gọi
-        dispatch(removeUserCurrent());
-        console.log('Current user after logout:', currentUser); // Kiểm tra giá trị currentUser sau khi dispatch
-        navigate('/');
+        logout(); // Gọi hàm logOut và truyền formData
     };
     return (
         <Navbar className="border-b-2">
