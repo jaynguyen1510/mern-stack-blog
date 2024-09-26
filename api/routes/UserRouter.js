@@ -9,5 +9,9 @@ router.post("/sign-in", UserController.signInUser);
 router.post("/google", UserController.signInGoogle);
 router.post("/log-out-user", verifyToken, UserController.logOutUser);
 router.put("/update-profile/:userId", verifyToken, UserController.updateUser);
-
+router.delete(
+  "/delete-profile/:userId",
+  verifyToken,
+  UserController.deleteUser
+);
 export default router;

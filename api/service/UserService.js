@@ -156,4 +156,14 @@ const updateUser = async (userData) => {
     }, // Trả về thông tin người dùng đã loại bỏ password
   };
 };
-export default { createUserService, signInUser, signInGoogle, updateUser };
+const deleteUser = async (userId) => {
+  const deletedUser = await User.findByIdAndDelete(userId);
+  return deletedUser;
+};
+export default {
+  createUserService,
+  signInUser,
+  signInGoogle,
+  updateUser,
+  deleteUser,
+};
