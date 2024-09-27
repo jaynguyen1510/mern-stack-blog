@@ -158,7 +158,12 @@ const updateUser = async (userData) => {
 };
 const deleteUser = async (userId) => {
   const deletedUser = await User.findByIdAndDelete(userId);
-  return deletedUser;
+  return {
+    status: "OK",
+    success: true,
+    message: "Người dùng đã được xóa",
+    deletedUser,
+  };
 };
 export default {
   createUserService,

@@ -1,11 +1,13 @@
 import { Button } from 'flowbite-react';
 import PropTypes from 'prop-types';
 
-const ButtonComponent = ({ gradientDuoTone, type, disabled, onClick, children, outline }) => {
+const ButtonComponent = ({ className, gradientDuoTone, type, disabled, onClick, children, outline, color }) => {
     return (
         <Button
+            className={className}
             gradientDuoTone={gradientDuoTone}
             type={type}
+            color={color}
             disabled={disabled}
             onClick={onClick} // Xử lý sự kiện nhấn nút
             outline={outline}
@@ -22,6 +24,8 @@ ButtonComponent.propTypes = {
     onClick: PropTypes.func, // Hàm xử lý nhấn nút
     children: PropTypes.node,
     outline: PropTypes.bool,
+    color: PropTypes.string,
+    className: PropTypes.string,
 };
 
 export default ButtonComponent;

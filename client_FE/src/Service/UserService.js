@@ -60,3 +60,15 @@ export const updateUser = async (id, data) => {
         throw error;
     }
 };
+export const deletedUser = async (id) => {
+    console.log('id', id);
+    try {
+        const res = await axios.delete(`${apiUrl}/user/delete-profile/${id}`, {
+            withCredentials: true, // Nếu cần gửi cookie
+        });
+        return res.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        throw error;
+    }
+};

@@ -11,7 +11,6 @@ const HeaderComponent = () => {
     const logout = useLogOut();
     const { currentUser } = useSelector((state) => state.user);
     const { theme } = useSelector((state) => state.theme);
-    console.log('current user', currentUser?.access_token);
 
     const path = useLocation().pathname;
     const handleLogOut = () => {

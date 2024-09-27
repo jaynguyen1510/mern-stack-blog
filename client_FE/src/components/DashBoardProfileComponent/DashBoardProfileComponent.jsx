@@ -2,12 +2,15 @@ import InputComponent from '../InputComponent/InputComponent';
 import CircularProgressbarComponent from '../CircularProgressbarComponent/CircularProgressbarComponent ';
 import useUploadImage from '../../Hooks/useUpLoadImage';
 import ButtonComponent from '../ButtonComponent/ButtonComponent';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useRef, useState } from 'react';
-import { Alert } from 'flowbite-react';
-import { updateError } from '../../redux/Slice/userSlice';
 import useUpdateUser from '../../Hooks/useUpdateUser';
 import LoadingComponent from '../LoadingComponent/LoadingComponent';
+import useDeleted from '../../Hooks/useDeleted';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, Modal } from 'flowbite-react';
+import { deleteError, updateError } from '../../redux/Slice/userSlice';
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
 const DashBoardProfileComponent = () => {
     const { uploadImage, uploadProgress, imageUrl, uploadError, fromData } = useUploadImage();
@@ -16,6 +19,8 @@ const DashBoardProfileComponent = () => {
     const [imageUrlSelected, setImageUrlSelected] = useState(currentUser?.avatar);
     const [dataFormSelected, setDataFormSelected] = useState({});
     const { updateUser, success, isLoading, error, message } = useUpdateUser();
+    const { deleteUser, errorDeleted, successDeleted } = useDeleted();
+    const [showModal, setShowModal] = useState(false);
 
     const dispatch = useDispatch();
     const fileInputRef = useRef();
@@ -56,6 +61,14 @@ const DashBoardProfileComponent = () => {
             await updateUser(currentUser?._id, dataForm); // Đợi kết quả từ updateUser
         } catch (error) {
             dispatch(updateError(error.message));
+        }
+    };
+    const handleRemoveUser = async () => {
+        setShowModal(false);
+        try {
+            await deleteUser(currentUser?._id);
+        } catch (error) {
+            dispatch(deleteError(error.message));
         }
     };
 
@@ -121,9 +134,9 @@ const DashBoardProfileComponent = () => {
                     )}
                 </ButtonComponent>
                 {/* Hiển thị thông báo thành công */}
-                {message && success && (
+                {((message && success) || successDeleted) && (
                     <Alert className="mt-4 p-3 bg-green-100 border border-green-500 text-green-700 rounded">
-                        {message}
+                        {message || successDeleted}
                     </Alert>
                 )}
             </form>
@@ -134,11 +147,44 @@ const DashBoardProfileComponent = () => {
             )}
 
             {/* Hiển thị thông báo lỗi */}
-            {error && <Alert className="mt-5 p-3 bg-red-100 border border-red-500 text-red-700 rounded">{error}</Alert>}
+            {(error || errorDeleted) && (
+                <Alert className="mt-5 p-3 bg-red-100 border border-red-500 text-red-700 rounded">
+                    {error || errorDeleted}
+                </Alert>
+            )}
 
             <div className="text-red-500 flex justify-between mt-5">
-                <span className="cursor-pointer">Hủy tài khoản</span>
+                <span className="cursor-pointer" onClick={() => setShowModal(true)}>
+                    Hủy tài khoản
+                </span>
             </div>
+            <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
+                <Modal.Header />
+                <Modal.Body>
+                    <div className="text-center">
+                        <ExclamationCircleIcon className="h-14 w-14 text-red-500 mb-4 mx-auto " />
+                        <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+                            Bạn có chắc là muốn hủy tài khoản không ?
+                        </h3>
+                        <div className="flex justify-between gap-4 mt-6">
+                            <ButtonComponent
+                                color="bg-gray-400"
+                                className="bg-gray-400 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out hover:bg-gray-600 !important" // Thêm !important nếu cần
+                                onClick={handleRemoveUser}
+                            >
+                                Tôi muốn Hủy
+                            </ButtonComponent>
+                            <ButtonComponent
+                                color="failure"
+                                className="bg-red-500 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out hover:bg-red-600 !important" // Thêm !important nếu cần
+                                onClick={() => setShowModal(false)}
+                            >
+                                Không muốn hủy
+                            </ButtonComponent>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 };

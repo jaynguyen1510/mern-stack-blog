@@ -165,15 +165,11 @@ const deleteUser = async (req, res, next) => {
     // 4. Check if the user was found and deleted
     if (!deletedUser) {
       return res
-        .status(404)
+        .status(200)
         .json({ status: "ERR", message: "Người dùng không tồn tại" });
     }
     // 5. Successful deletion response
-    return res.status(200).json({
-      status: "OK",
-      message: "Người dùng đã được xóa",
-      deletedUser,
-    });
+    return res.status(200).json(deletedUser);
   } catch (error) {
     // 6. Error handling
     return next(customErrorHandler(res, 500, "Lỗi khi xóa người dùng"));

@@ -56,6 +56,14 @@ const userSlice = createSlice({
             state.isLoading = false;
             state.error = action.payload.message;
         },
+        deleteStart: (state) => {
+            state.isLoading = true;
+            state.message = null;
+        },
+        deleteError: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload.message;
+        },
         removeUserCurrent(state) {
             state.currentUser = '';
             state.isLoading = false;
@@ -75,5 +83,7 @@ export const {
     updateStart,
     updateSuccess,
     updateError,
+    deleteStart,
+    deleteError,
 } = userSlice.actions;
 export default userSlice.reducer;
