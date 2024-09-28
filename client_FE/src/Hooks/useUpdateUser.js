@@ -2,6 +2,7 @@ import * as UserService from '../Service/UserService';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateError, updateSuccess, updateStart, resetError, resetMessage } from '../redux/Slice/userSlice';
 import { useEffect, useState, useRef } from 'react';
+import { useMutationCustomHook } from './useMutationCustom';
 
 const useUpdateUser = () => {
     const dispatch = useDispatch();
@@ -9,15 +10,21 @@ const useUpdateUser = () => {
     const { isLoading, error, message } = useSelector((state) => state.user);
     const timerIdRef = useRef(null); // Sử dụng useRef để lưu trữ timerId
 
+    const mutateUpdateUser = useMutationCustomHook(async ({ id, formData }) => {
+        console.log('user', id, formData);
+        const response = await UserService.updateUser(id, formData);
+        return response; // Đảm bảo trả về response từ API
+    });
+
     const updateUser = async (id, formData) => {
         dispatch(updateStart()); // Start update process
 
         try {
-            if (!formData) {
+            if (!formData && !id) {
                 return;
             }
-
-            const data = await UserService.updateUser(id, formData);
+            const dataUserUpdate = { id, formData };
+            const data = await mutateUpdateUser.mutateAsync(dataUserUpdate);
 
             if (data.status === 'ERR') {
                 dispatch(updateError(data)); // Handle error

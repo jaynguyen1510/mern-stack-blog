@@ -21,6 +21,7 @@ const DashBoardProfileComponent = () => {
     const { updateUser, success, isLoading, error, message } = useUpdateUser();
     const { deleteUser, errorDeleted, successDeleted } = useDeleted();
     const [showModal, setShowModal] = useState(false);
+    const [noFromData, setNoFromData] = useState(null);
 
     const dispatch = useDispatch();
     const fileInputRef = useRef();
@@ -48,21 +49,25 @@ const DashBoardProfileComponent = () => {
             [e.target.id]: e.target.value, // Cập nhật thuộc tính dựa trên ID
         }));
     };
-    // console.log(currentUser?._id);
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Ngăn chặn hành động mặc định của form
+        e.preventDefault(); // Prevent default form submission behavior
+
+        // Log dataForm to check if it's getting the latest values
+        console.log('Submitted form data:', dataForm);
 
         if (Object.keys(dataForm).length === 0) {
-            return;
+            return setNoFromData('Không có thông tin mới để thay đổi');
         }
-
+        setNoFromData(null);
         try {
-            await updateUser(currentUser?._id, dataForm); // Đợi kết quả từ updateUser
+            // Ensure you are passing the latest formData, not outdated
+            await updateUser(currentUser?._id, dataForm); // Wait for the updateUser response
         } catch (error) {
             dispatch(updateError(error.message));
         }
     };
+
     const handleRemoveUser = async () => {
         setShowModal(false);
         try {
@@ -147,9 +152,9 @@ const DashBoardProfileComponent = () => {
             )}
 
             {/* Hiển thị thông báo lỗi */}
-            {(error || errorDeleted) && (
+            {(error || errorDeleted || noFromData) && (
                 <Alert className="mt-5 p-3 bg-red-100 border border-red-500 text-red-700 rounded">
-                    {error || errorDeleted}
+                    {error || errorDeleted || noFromData}
                 </Alert>
             )}
 

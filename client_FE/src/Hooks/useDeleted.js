@@ -3,6 +3,7 @@ import { deleteError, deleteStart, resetError, resetMessage } from '../redux/Sli
 import { useEffect, useRef, useState } from 'react';
 import * as UserService from '../Service/UserService';
 import useLogOut from './useLogOut';
+import { useMutationCustomHook } from './useMutationCustom';
 
 const useDeleted = () => {
     const [errorDeleted, setErrorDeleted] = useState(null);
@@ -11,15 +12,20 @@ const useDeleted = () => {
     const dispatch = useDispatch();
     const timeIdRef = useRef(null);
 
+    const mutateRemoveUser = useMutationCustomHook(async ({ id }) => {
+        const response = await UserService.deletedUser(id);
+        return response;
+    });
     const deleteUser = async (id) => {
-        console.log('id', id);
-
         dispatch(deleteStart());
         if (!id) {
             return setErrorDeleted('Không thể tìm thấy id tài khoản');
         }
         try {
-            const data = await UserService.deletedUser(id);
+            const dataRemoveUser = { id };
+
+            const data = await mutateRemoveUser.mutateAsync(dataRemoveUser);
+
             if (data.status === 'ERR') {
                 dispatch(deleteError(data));
                 timeIdRef.current = setTimeout(() => {
