@@ -3,6 +3,8 @@ import { Suspense, lazy } from 'react';
 import HeaderComponent from '../components/HeaderComponent/HeaderComponent';
 import FooterComponent from '../components/FooterComponent/FooterComponent';
 import PrivateDashBoard from '../components/PrivateDashBoard/PrivateDashBoard';
+import CreatePostPage from '../pages/CreatePostPage';
+import PrivateCreatePostAdMin from '../components/PrivateCreatePostAdMin/PrivateCreatePostAdMin';
 
 // Sử dụng lazy loading cho các trang
 const HomePage = lazy(() => import('./../pages/HomePage'));
@@ -28,6 +30,9 @@ export default function App() {
                         <Route path="/sign-in" element={<SignInPage />} />
                         <Route path="/sign-up" element={<SignUpPage />} />
                         <Route path="/project-page" element={<ProjectPage />} />
+                        <Route element={<PrivateCreatePostAdMin />}>
+                            <Route path="/create-post" element={<CreatePostPage />} />
+                        </Route>
                     </Routes>
                 </Suspense>
                 <FooterComponent />

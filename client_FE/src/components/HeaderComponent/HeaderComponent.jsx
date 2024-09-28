@@ -86,6 +86,11 @@ const HeaderComponent = () => {
                         Lịch tập
                     </div>
                 </Navbar.Link>
+                {currentUser?.isAdmin === true && (
+                    <Navbar.Link active>
+                        <div className="cursor-pointer">Xin chào Admin</div>
+                    </Navbar.Link>
+                )}
             </Navbar.Collapse>
         </Navbar>
     );

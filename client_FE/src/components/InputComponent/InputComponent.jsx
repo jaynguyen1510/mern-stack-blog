@@ -3,7 +3,7 @@ import { TextInput } from 'flowbite-react';
 import PropTypes from 'prop-types';
 
 const InputComponent = forwardRef(function InputComponent(
-    { id, type, placeholder, onChange, defaultValue, className, autocomplete, accept, hidden },
+    { id, type, placeholder, onChange, defaultValue, className, autocomplete, accept, hidden, required },
     ref,
 ) {
     return (
@@ -17,6 +17,7 @@ const InputComponent = forwardRef(function InputComponent(
             defaultValue={defaultValue}
             autoComplete={autocomplete}
             ref={ref}
+            required={required}
             style={{ display: hidden ? 'none' : 'block' }} // Ẩn bằng style
         />
     );
@@ -32,6 +33,7 @@ InputComponent.propTypes = {
     autocomplete: PropTypes.string,
     accept: PropTypes.string,
     hidden: PropTypes.bool, // Thêm hidden vào PropTypes
+    required: PropTypes.bool,
 };
 
 export default InputComponent;

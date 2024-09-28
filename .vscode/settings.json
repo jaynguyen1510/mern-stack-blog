@@ -3,5 +3,5 @@
   "cSpell.autoFormatConfigFile": true,
   "autoprefixer.formatOnSave": true,
   "notebook.formatOnSave.enabled": true,
-  "cSpell.words": ["defaultvalue"]
+  "cSpell.words": ["defaultvalue", "uncategroized"]
 }

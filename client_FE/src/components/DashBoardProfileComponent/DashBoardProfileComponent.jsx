@@ -11,20 +11,22 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, Modal } from 'flowbite-react';
 import { deleteError, updateError } from '../../redux/Slice/userSlice';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { Link, useNavigate } from 'react-router-dom';
 
 const DashBoardProfileComponent = () => {
     const { uploadImage, uploadProgress, imageUrl, uploadError, fromData } = useUploadImage();
-    const { currentUser } = useSelector((state) => state.user);
+    const { currentUser, isLoading } = useSelector((state) => state.user);
     const [selectImage, setSelectImage] = useState(null);
     const [imageUrlSelected, setImageUrlSelected] = useState(currentUser?.avatar);
     const [dataFormSelected, setDataFormSelected] = useState({});
-    const { updateUser, success, isLoading, error, message } = useUpdateUser();
+    const { updateUser, success, isLoading: isLoadingUpdateUser, error, message } = useUpdateUser();
     const { deleteUser, errorDeleted, successDeleted } = useDeleted();
     const [showModal, setShowModal] = useState(false);
     const [noFromData, setNoFromData] = useState(null);
 
     const dispatch = useDispatch();
     const fileInputRef = useRef();
+    const navigate = useNavigate();
 
     const handleSelectImage = (e) => {
         const file = e.target.files[0];
@@ -131,13 +133,33 @@ const DashBoardProfileComponent = () => {
                 />
                 <InputComponent id="password" type="password" placeholder="password" onChange={handleChangeProfile} />
 
-                <ButtonComponent type={'submit'} gradientDuoTone="purpleToBlue" outline>
-                    {isLoading ? (
-                        <LoadingComponent isLoading={isLoading}>Vui lòng chờ...</LoadingComponent>
+                <ButtonComponent
+                    type={'submit'}
+                    gradientDuoTone="purpleToBlue"
+                    outline
+                    disabled={isLoading || isLoadingUpdateUser}
+                >
+                    {isLoadingUpdateUser || isLoading ? (
+                        <LoadingComponent isLoading={isLoadingUpdateUser || isLoading}>
+                            Vui lòng chờ...
+                        </LoadingComponent>
                     ) : (
                         'Cập nhật'
                     )}
                 </ButtonComponent>
+                {/* {Hiển thị nút tạo bài viết của Admin} */}
+                {currentUser?.isAdmin === true && (
+                    <Link to={'/create-post'}>
+                        <ButtonComponent
+                            type="button"
+                            gradientDuoTone="purpleToBlue"
+                            className="w-full"
+                            onClick={() => navigate('/create-post')}
+                        >
+                            Tạo bài viết
+                        </ButtonComponent>
+                    </Link>
+                )}
                 {/* Hiển thị thông báo thành công */}
                 {((message && success) || successDeleted) && (
                     <Alert className="mt-4 p-3 bg-green-100 border border-green-500 text-green-700 rounded">
