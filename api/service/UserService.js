@@ -53,6 +53,7 @@ const signInUser = async (userData, res) => {
     }
     const access_token = await jwtService.generalAccessToken({
       id: validUser._id,
+      isAdmin: validUser.isAdmin,
     });
     const { password: pass, ...rest } = validUser._doc;
     return {
@@ -82,6 +83,7 @@ const signInGoogle = async (userData) => {
     if (userGoogle) {
       const access_token = await jwtService.generalAccessToken({
         id: userGoogle._id,
+        isAdmin: userGoogle.isAdmin,
       });
       const { password, ...rest } = userGoogle._doc;
       return {
@@ -110,6 +112,7 @@ const signInGoogle = async (userData) => {
       await newUser.save();
       const access_token = await jwtService.generalAccessToken({
         id: newUser._id,
+        isAdmin: newUser.isAdmin,
       });
       const { password, ...rest } = newUser._doc;
       return {
