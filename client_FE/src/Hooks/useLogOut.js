@@ -20,6 +20,9 @@ const useLogOut = () => {
             if (res) {
                 // Nếu phản hồi thành công, xóa user khỏi Redux
                 dispatch(removeUserCurrent());
+
+                localStorage.removeItem('userDataWithGG'); // Chỉ xóa dữ liệu của user
+
                 // Điều hướng đến trang đăng nhập hoặc trang chủ
                 navigate('/'); // Hoặc '/'
             }

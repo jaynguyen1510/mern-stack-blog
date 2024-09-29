@@ -23,6 +23,8 @@ const DashBoardProfileComponent = () => {
     const { deleteUser, errorDeleted, successDeleted } = useDeleted();
     const [showModal, setShowModal] = useState(false);
     const [noFromData, setNoFromData] = useState(null);
+    const userDataWithGoogle = JSON.parse(localStorage.getItem('userDataWithGG')); // Lấy dữ liệu từ localStorage
+    console.log('userData', userDataWithGoogle);
 
     const dispatch = useDispatch();
     const fileInputRef = useRef();
@@ -131,7 +133,15 @@ const DashBoardProfileComponent = () => {
                     defaultValue={currentUser?.email}
                     onChange={handleChangeProfile}
                 />
-                <InputComponent id="password" type="password" placeholder="password" onChange={handleChangeProfile} />
+                {/* {đăng nhập với gg thì ko cần thay đổi mật khẩu cho profile} */}
+                {!userDataWithGoogle?.userGoogle && (
+                    <InputComponent
+                        id="password"
+                        type="password"
+                        placeholder="password"
+                        onChange={handleChangeProfile}
+                    />
+                )}
 
                 <ButtonComponent
                     type={'submit'}

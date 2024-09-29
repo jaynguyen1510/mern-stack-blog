@@ -16,7 +16,7 @@ const useSignInGoogle = () => {
             const response = await mutationSignInGoogle.mutateAsync(formData);
             if (response?.status === 'OK' && response?.success === true) {
                 dispatch(signInUserSuccess(response));
-
+                localStorage.setItem('userDataWithGG', JSON.stringify(response)); // Lưu dữ liệu vào localStorage
                 // Dọn dẹp timeout và điều hướng sau 3 giây
                 const timeoutId = setTimeout(() => {
                     dispatch(resetMessage());

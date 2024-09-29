@@ -2,6 +2,7 @@
 import User from "../Model/UserModel.js";
 import bcryptJs from "bcryptjs";
 import jwtService from "../service/jwtService.js";
+
 const createUserService = async (userData) => {
   const { userName, email, password } = userData;
 

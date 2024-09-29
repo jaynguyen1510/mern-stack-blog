@@ -47,6 +47,7 @@ const signInUser = async (req, res) => {
       httpOnly: true,
       secure: false, // Đặt true nếu chạy trên HTTPS
       sameSite: "strict", // Hoặc 'none' nếu cần
+      maxAge: 365 * 24 * 60 * 60 * 1000, // Cookie tồn tại 1 năm
     });
 
     return res.status(200).json(response);
@@ -79,6 +80,7 @@ const signInGoogle = async (req, res) => {
       httpOnly: true,
       secure: false, // Đặt true nếu chạy trên HTTPS
       sameSite: "strict", // Hoặc 'none' nếu cần
+      maxAge: 365 * 24 * 60 * 60 * 1000, // Cookie tồn tại 1 năm
     });
 
     return res.status(200).json(response);
