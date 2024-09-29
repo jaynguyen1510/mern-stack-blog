@@ -24,7 +24,6 @@ const DashBoardProfileComponent = () => {
     const [showModal, setShowModal] = useState(false);
     const [noFromData, setNoFromData] = useState(null);
     const userDataWithGoogle = JSON.parse(localStorage.getItem('userDataWithGG')); // Lấy dữ liệu từ localStorage
-    console.log('userData', userDataWithGoogle);
 
     const dispatch = useDispatch();
     const fileInputRef = useRef();
@@ -126,13 +125,16 @@ const DashBoardProfileComponent = () => {
                     defaultValue={currentUser?.userName}
                     onChange={handleChangeProfile}
                 />
-                <InputComponent
-                    id="email"
-                    type="text"
-                    placeholder="email"
-                    defaultValue={currentUser?.email}
-                    onChange={handleChangeProfile}
-                />
+                {/* {đăng nhập với gg thì ko cần thay đổi email} */}
+                {!userDataWithGoogle?.userGoogle && (
+                    <InputComponent
+                        id="email"
+                        type="text"
+                        placeholder="email"
+                        defaultValue={currentUser?.email}
+                        onChange={handleChangeProfile}
+                    />
+                )}
                 {/* {đăng nhập với gg thì ko cần thay đổi mật khẩu cho profile} */}
                 {!userDataWithGoogle?.userGoogle && (
                     <InputComponent
