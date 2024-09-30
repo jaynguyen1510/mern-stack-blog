@@ -13,8 +13,7 @@ const postSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default:
-        "https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg",
+      default: "",
     },
     content: {
       type: String,
@@ -22,7 +21,8 @@ const postSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      default: "uncategorized", // Giá trị mặc định nếu không có giá trị nào được cung cấp
+      default: "", // Giá trị mặc định nếu không có giá trị nào được cung cấp
+      required: true,
     },
     slug: {
       type: String,

@@ -26,7 +26,7 @@ const useUpdateUser = () => {
             const dataUserUpdate = { id, formData };
             const data = await mutateUpdateUser.mutateAsync(dataUserUpdate);
 
-            if (data.status === 'ERR') {
+            if (data?.status === 'ERR') {
                 dispatch(updateError(data)); // Handle error
                 // Reset error and message after some time
                 timerIdRef.current = setTimeout(() => {
@@ -34,9 +34,9 @@ const useUpdateUser = () => {
                     dispatch(resetMessage());
                     setSuccess(null); // Reset success message
                 }, 2000); // Adjust the delay as needed
-            } else if (data.status === 'OK' && data.success === true) {
+            } else if (data?.status === 'OK' && data?.success === true) {
                 dispatch(updateSuccess(data));
-                setSuccess(data.message); // Set success message
+                setSuccess(data?.message); // Set success message
 
                 // Reset error and message after some time
                 timerIdRef.current = setTimeout(() => {

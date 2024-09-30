@@ -22,7 +22,7 @@ const useSignIn = () => {
 
         try {
             const response = await mutationSignIn.mutateAsync(formData);
-            if (response.status === 'OK' && response.success === true) {
+            if (response?.status === 'OK' && response?.success === true) {
                 dispatch(signInUserSuccess(response));
                 // Thiết lập timer để reset error và message
                 timerRef.current = setTimeout(() => {
@@ -30,7 +30,7 @@ const useSignIn = () => {
                     dispatch(resetMessage()); // Reset message
                     navigate('/'); // Điều hướng sau khi đăng nhập thành công
                 }, 1000); // Thời gian chờ để điều hướng
-            } else if (response.status === 'ERR') {
+            } else if (response?.status === 'ERR') {
                 dispatch(signInFailure(response)); // Thông báo lỗi đăng nhập
                 timerRef.current = setTimeout(() => {
                     dispatch(resetError()); // Reset error

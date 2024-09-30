@@ -14,11 +14,18 @@ const createPost = async (req, res, next) => {
       message: "Bạn không có quyền tạo bài viết.",
     });
   }
-  if (!body.title && !body.content) {
+  if (!body.title || !body.content) {
     return res.status(200).json({
       status: "ERR",
       success: false,
-      message: "Tiêu đề và nội dung bài viết không được để trống.",
+      message: "Có vẻ như tiêu đề hoặc nội dung của bạn bị thiếu.",
+    });
+  }
+  if (!body.category) {
+    return res.status(200).json({
+      status: "ERR",
+      success: false,
+      message: "Bài viết của bạn nên có danh mục",
     });
   }
   // Gộp userId và body vào một đối tượng mới

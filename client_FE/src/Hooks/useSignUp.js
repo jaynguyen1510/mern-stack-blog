@@ -21,13 +21,13 @@ const useSignUp = () => {
         let timer; // Khai báo biến timer
         try {
             const response = await mutation.mutateAsync(formData); // Gọi hàm đăng ký
-            if (response.status === 'OK' && response.success === true) {
-                setMessage(response.message);
+            if (response?.status === 'OK' && response?.success === true) {
+                setMessage(response?.message);
                 timer = setTimeout(() => {
                     navigate('/sign-in');
                 }, 1000); // Thay đổi thời gian nếu cần
-            } else if (response.status === 'ERR' && response.success === false) {
-                setError(response.message);
+            } else if (response?.status === 'ERR' && response?.success === false) {
+                setError(response?.message);
             }
         } catch (err) {
             setError('Đã xảy ra lỗi, vui lòng thử lại');
