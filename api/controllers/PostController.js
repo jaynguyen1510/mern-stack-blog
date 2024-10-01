@@ -38,5 +38,14 @@ const createPost = async (req, res, next) => {
     return next(customErrorHandler(res, 500, "Lỗi khi tạo bài viết"));
   }
 };
-
-export default { createPost };
+const getAllPost = async (req, res, next) => {
+  try {
+    const postResponse = await PostService.getAllPosts(req);
+    return res.status(200).json(postResponse);
+  } catch (error) {
+    return next(
+      customErrorHandler(res, 500, "Không thể lấy danh sách bài viết")
+    );
+  }
+};
+export default { createPost, getAllPost };

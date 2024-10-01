@@ -22,6 +22,7 @@ const CreatePostPage = () => {
     const [selectCategory, setSelectCategory] = useState(null);
     const [content, setContent] = useState(null);
     const [totalFromData, setTotalFromData] = useState({});
+    const [isLoading, setIsLoading] = useState(null);
     const { createPost, isLoadingCreatePost, isSuccessCreatePost, createError, createSuccess } = useCreatePost();
 
     // Sử dụng useEffect để cập nhật totalFromData mỗi khi có thay đổi ở title, selectCategory, content
@@ -41,7 +42,9 @@ const CreatePostPage = () => {
         e.preventDefault();
         // Thêm code để lưu bài viết vào cơ sở dữ liệu
         try {
+            setIsLoading(true);
             await createPost(totalFromData);
+            setIsLoading(false);
         } catch (error) {
             console.error('Error creating post:', error);
         }
@@ -114,7 +117,7 @@ const CreatePostPage = () => {
                 {/* Optional: Add a submit button */}
                 <div className="flex justify-center p-5">
                     <ButtonComponent gradientDuoTone="purpleToPink" type="submit" disabled={isLoadingCreatePost}>
-                        {isLoadingCreatePost ? (
+                        {isLoadingCreatePost || isLoading ? (
                             <LoadingComponent isLoading={isLoadingCreatePost}>Vui lòng chờ...</LoadingComponent>
                         ) : (
                             'Tạo bài viết'

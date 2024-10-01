@@ -52,4 +52,65 @@ const createPost = async (dataPost) => {
   }
 };
 
-export default { createPost };
+const getAllPosts = async (getAllDataPost) => {
+  try {
+    const startIndex = parseInt(getAllDataPost.params.startIndex) || 0;
+    const limit = parseInt(getAllDataPost.query.limit) || 9;
+    const sorDirection = getAllDataPost.query.order === "asc" ? 1 : -1;
+    const getAllPosts = await Post.find({
+      ...(getAllDataPost.query.userId && {
+        userId: getAllDataPost.query.userId,
+      }),
+      ...(getAllDataPost.query.category && {
+        category: getAllDataPost.query.category,
+      }),
+      ...(getAllDataPost.query.slug && {
+        slug: getAllDataPost.query.slug,
+      }),
+      ...(getAllDataPost.query.postId && {
+        _id: getAllDataPost.query.postId,
+      }),
+      ...(getAllDataPost.query.searchTerm && {
+        $or: [
+          {
+            title: { $regex: getAllDataPost.query.searchTerm, $option: "i" },
+          },
+          {
+            content: { $regex: getAllDataPost.query.searchTerm, $option: "i" },
+          },
+        ],
+      }),
+    })
+      .sort({ updatedAt: sorDirection })
+      .skip(startIndex)
+      .limit(limit);
+    const totalPost = await Post.countDocuments();
+    const timeNow = new Date();
+    const oneMonthAgo = new Date(
+      timeNow.getFullYear(),
+      timeNow.getMonth() - 1,
+      timeNow.getDate()
+    );
+
+    const lastMonthPost = await Post.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+    return {
+      status: "OK",
+      success: true,
+      message: "Lấy danh sách bài viết thành công!",
+      data: getAllPosts,
+      totalPost: totalPost,
+      lastMonthPost: lastMonthPost,
+    };
+  } catch (error) {
+    console.error("Error getting all posts:", error);
+    return {
+      status: "ERR",
+      success: false,
+      message: "Lỗi khi lấy danh sách bài viết: " + error.message,
+    };
+  }
+};
+
+export default { createPost, getAllPosts };
