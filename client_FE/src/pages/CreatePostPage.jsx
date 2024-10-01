@@ -7,6 +7,7 @@ import 'react-quill/dist/quill.snow.css'; // Sử dụng giao diện "snow"
 import useUploadImage from '../Hooks/useUpLoadImage';
 import CircularProgressbarComponent from '../components/CircularProgressbarComponent/CircularProgressbarComponent ';
 import useCreatePost from '../Hooks/useCreatePost';
+import LoadingComponent from '../components/LoadingComponent/LoadingComponent';
 
 const CreatePostPage = () => {
     const {
@@ -21,7 +22,7 @@ const CreatePostPage = () => {
     const [selectCategory, setSelectCategory] = useState(null);
     const [content, setContent] = useState(null);
     const [totalFromData, setTotalFromData] = useState({});
-    const { createPost, createPostError, createPostSuccess } = useCreatePost();
+    const { createPost, isLoadingCreatePost, isSuccessCreatePost, createError, createSuccess } = useCreatePost();
 
     // Sử dụng useEffect để cập nhật totalFromData mỗi khi có thay đổi ở title, selectCategory, content
     useEffect(() => {
@@ -112,20 +113,24 @@ const CreatePostPage = () => {
                 </div>
                 {/* Optional: Add a submit button */}
                 <div className="flex justify-center p-5">
-                    <ButtonComponent type={'submit'} gradientDuoTone={'purpleToBlue'} size="md">
-                        Đăng bài
+                    <ButtonComponent gradientDuoTone="purpleToPink" type="submit" disabled={isLoadingCreatePost}>
+                        {isLoadingCreatePost ? (
+                            <LoadingComponent isLoading={isLoadingCreatePost}>Vui lòng chờ...</LoadingComponent>
+                        ) : (
+                            'Tạo bài viết'
+                        )}
                     </ButtonComponent>
                 </div>
                 {/* Hiển thị thông báo thành công */}
-                {createPostSuccess && (
-                    <Alert className="mt-4 p-3 bg-green-100 border border-green-500 text-green-700 rounded">
-                        {createPostSuccess}
+                {isSuccessCreatePost && createSuccess && (
+                    <Alert className="mt-4 p-3 bg-green-100 dark:bg-green-900 border border-green-500 dark:border-green-300 text-green-700 dark:text-green-200 rounded">
+                        {createSuccess}
                     </Alert>
                 )}
                 {/* Hiển thị thông báo lỗi */}
-                {createPostError && (
-                    <Alert className="mt-5 p-3 bg-red-100 border border-red-500 text-red-700 rounded">
-                        {createPostError}
+                {createError && (
+                    <Alert className="mt-5 p-3 bg-red-100 dark:bg-red-900 border border-red-500 dark:border-red-300 text-red-700 dark:text-red-200 rounded">
+                        {createError}
                     </Alert>
                 )}
             </form>

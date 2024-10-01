@@ -1,12 +1,14 @@
 import * as PostService from '../Service/PostService';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useMutationCustomHook } from './useMutationCustom'; // Custom hook for mutation
 import { useNavigate } from 'react-router-dom';
+
 const useCreatePost = () => {
-    const [createPostError, setCreatePostError] = useState(null);
-    const [createPostSuccess, setCreatePostSuccess] = useState(null);
     const timerIdRef = useRef(null); // Sử dụng useRef để lưu trữ timerId
     const navigate = useNavigate();
+    const [createSuccess, setCreateSuccess] = useState(null);
+    const [createError, setCreateError] = useState(null);
+
     const mutationCreatePost = useMutationCustomHook(async (formData) => {
         return await PostService.createPost(formData);
     });
@@ -14,22 +16,22 @@ const useCreatePost = () => {
     const createPost = async (formData) => {
         if (!formData) return;
         try {
-            setCreatePostError(null);
-            setCreatePostSuccess(null);
+            setCreateError(null);
             const data = await mutationCreatePost.mutateAsync(formData);
             if (data?.status === 'ERR' && data?.success === false) {
-                setCreatePostError(data?.message);
+                setCreateError(data?.message);
+                throw new Error(data?.message || 'Đã có lỗi xảy ra');
             } else if (data?.status === 'OK' && data?.success === true) {
-                setCreatePostSuccess(data?.message);
+                setCreateError(null);
+                setCreateSuccess(data?.message);
                 timerIdRef.current = setTimeout(() => {
-                    setCreatePostSuccess(null); // Reset success message
                     navigate(`/post/${data?.data?.slug}`);
-                }, 2000); // Adjust the delay as needed
+                }, 2000); // Điều chỉnh thời gian delay nếu cần
             }
             return data;
         } catch (error) {
-            setCreatePostError('Failed to create post');
             console.error(error);
+            setCreateError(error.message);
         }
     };
 
@@ -40,7 +42,13 @@ const useCreatePost = () => {
         };
     }, []);
 
-    return { createPost, createPostError, createPostSuccess };
+    return {
+        createPost,
+        isLoadingCreatePost: mutationCreatePost?.isLoading,
+        isSuccessCreatePost: mutationCreatePost?.isSuccess,
+        createError,
+        createSuccess,
+    };
 };
 
 export default useCreatePost;

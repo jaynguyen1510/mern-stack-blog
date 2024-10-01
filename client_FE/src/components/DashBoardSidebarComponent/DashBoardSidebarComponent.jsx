@@ -1,13 +1,15 @@
 import { Sidebar } from 'flowbite-react';
-import { HiArrowSmRight, HiUser } from 'react-icons/hi';
+import { HiArrowSmRight, HiDocumentText, HiUser } from 'react-icons/hi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useLogOut from '../../Hooks/useLogOut';
+import { useSelector } from 'react-redux';
 const DashBoardSidebarComponent = () => {
     const navigate = useNavigate();
     const logout = useLogOut();
     const location = useLocation();
     const [tab, setTab] = useState('');
+    const { currentUser } = useSelector((state) => state.user);
 
     // lấy thông tin URL thuộc tính của tab?=profile or tab?=test
     useEffect(() => {
@@ -24,26 +26,28 @@ const DashBoardSidebarComponent = () => {
 
     return (
         <Sidebar className="w-full md:w-50">
-            <Sidebar.ItemGroup>
+            <Sidebar.ItemGroup className="flex flex-col gap-1">
                 <Sidebar.Item
                     className="cursor-pointer"
                     active={tab === 'profile'} // Đây sẽ đánh dấu active nếu tab là 'profile'
                     icon={HiUser}
-                    label={'User'}
+                    label={currentUser?.isAdmin ? ' Admin' : 'User'}
                     labelColor={'dark'}
                     onClick={() => navigate('/dashboard?tab=profile')} // Điều hướng
                 >
                     Thông tin cá nhân
                 </Sidebar.Item>
-                {/* <Sidebar.Item
-                    className="cursor-pointer"
-                    active={tab === 'post'}
-                    icon={HiUser}
-                    label={'User'}
-                    labelColor={'dark'}
-                >
-                    Post
-                </Sidebar.Item> */}
+                {currentUser?.isAdmin && (
+                    <Sidebar.Item
+                        className="cursor-pointer"
+                        active={tab === 'post'}
+                        icon={HiDocumentText}
+                        labelColor={'dark'}
+                        onClick={() => navigate('/dashboard?tab=post')}
+                    >
+                        Quản lý Bài viết
+                    </Sidebar.Item>
+                )}
                 <Sidebar.Item className="cursor-pointer" icon={HiArrowSmRight} onClick={handleLogOut}>
                     Đăng xuất
                 </Sidebar.Item>
