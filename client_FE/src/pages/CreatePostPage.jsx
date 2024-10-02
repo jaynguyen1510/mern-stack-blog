@@ -19,10 +19,10 @@ const CreatePostPage = () => {
     } = useUploadImage();
     const [fileImage, setFileImage] = useState(null);
     const [title, setTitle] = useState(null);
+    const [errorTitle, setErrorTitle] = useState(null);
     const [selectCategory, setSelectCategory] = useState(null);
     const [content, setContent] = useState(null);
     const [totalFromData, setTotalFromData] = useState({});
-    const [isLoading, setIsLoading] = useState(null);
     const { createPost, isLoadingCreatePost, isSuccessCreatePost, createError, createSuccess } = useCreatePost();
 
     // Sử dụng useEffect để cập nhật totalFromData mỗi khi có thay đổi ở title, selectCategory, content
@@ -37,14 +37,29 @@ const CreatePostPage = () => {
             uploadImage(fileImage);
         }
     };
+    const handleChangeLimitTitle = (e) => {
+        const value = e.target.value;
+
+        // Kiểm tra chiều dài và chỉ cập nhật nếu chiều dài từ 0 đến 70 ký tự
+        if (value.length <= 70) {
+            setTitle(value);
+
+            // Kiểm tra chiều dài của tiêu đề để thiết lập thông báo lỗi phù hợp
+            if (value.length < 50) {
+                setErrorTitle('Tiêu đề phải ít nhất 50 ký và nhỏ hơn 70 tự.');
+            } else {
+                setErrorTitle(null); // Xóa thông báo lỗi nếu tiêu đề đủ điều kiện
+            }
+        } else {
+            setErrorTitle('Tiêu đề vượt quá 70 ký tự.'); // Thông báo nếu vượt quá 70 ký tự
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         // Thêm code để lưu bài viết vào cơ sở dữ liệu
         try {
-            setIsLoading(true);
             await createPost(totalFromData);
-            setIsLoading(false);
         } catch (error) {
             console.error('Error creating post:', error);
         }
@@ -62,8 +77,10 @@ const CreatePostPage = () => {
                         required
                         id="title"
                         className="flex-1"
-                        onChange={(e) => setTitle(e.target.value)}
+                        maxLength={71} // Giới hạn tối đa 70 ký tự
+                        onChange={handleChangeLimitTitle}
                     />
+
                     <Select id="category-select" className="flex-1" onChange={(e) => setSelectCategory(e.target.value)}>
                         <option value="">-- Chọn danh mục --</option>
                         <option value={'healthy'}>Ăn uống</option>
@@ -117,7 +134,7 @@ const CreatePostPage = () => {
                 {/* Optional: Add a submit button */}
                 <div className="flex justify-center p-5">
                     <ButtonComponent gradientDuoTone="purpleToPink" type="submit" disabled={isLoadingCreatePost}>
-                        {isLoadingCreatePost || isLoading ? (
+                        {isLoadingCreatePost ? (
                             <LoadingComponent isLoading={isLoadingCreatePost}>Vui lòng chờ...</LoadingComponent>
                         ) : (
                             'Tạo bài viết'
@@ -131,9 +148,9 @@ const CreatePostPage = () => {
                     </Alert>
                 )}
                 {/* Hiển thị thông báo lỗi */}
-                {createError && (
+                {(createError || errorTitle) && (
                     <Alert className="mt-5 p-3 bg-red-100 dark:bg-red-900 border border-red-500 dark:border-red-300 text-red-700 dark:text-red-200 rounded">
-                        {createError}
+                        {createError || errorTitle}
                     </Alert>
                 )}
             </form>

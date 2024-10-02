@@ -44,7 +44,7 @@ const useCreatePost = () => {
 
     return {
         createPost,
-        isLoadingCreatePost: mutationCreatePost?.isLoading,
+        isLoadingCreatePost: mutationCreatePost?.isPending,
         isSuccessCreatePost: mutationCreatePost?.isSuccess,
         createError,
         createSuccess,

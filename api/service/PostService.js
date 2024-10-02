@@ -99,9 +99,11 @@ const getAllPosts = async (getAllDataPost) => {
       status: "OK",
       success: true,
       message: "Lấy danh sách bài viết thành công!",
-      data: getAllPosts,
-      totalPost: totalPost,
-      lastMonthPost: lastMonthPost,
+      dataPost: {
+        data: getAllPosts,
+        totalPost: totalPost,
+        lastMonthPost: lastMonthPost,
+      },
     };
   } catch (error) {
     console.error("Error getting all posts:", error);

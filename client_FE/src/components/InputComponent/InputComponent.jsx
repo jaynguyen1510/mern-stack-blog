@@ -3,11 +3,12 @@ import { TextInput } from 'flowbite-react';
 import PropTypes from 'prop-types';
 
 const InputComponent = forwardRef(function InputComponent(
-    { id, type, placeholder, onChange, defaultValue, className, autocomplete, accept, hidden, required },
+    { id, type, placeholder, onChange, defaultValue, className, autocomplete, accept, hidden, required, maxLength },
     ref,
 ) {
     return (
         <TextInput
+            maxLength={maxLength}
             id={id}
             accept={accept}
             className={className}
@@ -34,6 +35,7 @@ InputComponent.propTypes = {
     accept: PropTypes.string,
     hidden: PropTypes.bool, // Thêm hidden vào PropTypes
     required: PropTypes.bool,
+    maxLength: PropTypes.number,
 };
 
 export default InputComponent;
