@@ -13,9 +13,9 @@ export const createPost = async (data) => {
         throw error;
     }
 };
-export const getAllPost = async (id) => {
+export const getAllPost = async (id, startIndex) => {
     try {
-        const res = await axios.get(`${apiUrl}/post/get-all-post?userId=${id}`);
+        const res = await axios.get(`${apiUrl}/post/get-all-post?userId=${id}&startIndex=${startIndex}`);
         return res.data; // Trả về dữ liệu từ response
     } catch (error) {
         console.error('Error get all post:', error);

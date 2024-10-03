@@ -57,6 +57,7 @@ const CreatePostPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorTitle(null);
         // Thêm code để lưu bài viết vào cơ sở dữ liệu
         try {
             await createPost(totalFromData);
