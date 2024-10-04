@@ -1,8 +1,9 @@
+import useLogOut from './useLogOut';
+import * as UserService from '../Service/UserService';
+import * as PostService from '../Service/PostService';
 import { useDispatch } from 'react-redux';
 import { deleteError, deleteStart, resetError, resetMessage } from '../redux/Slice/userSlice';
 import { useEffect, useRef, useState } from 'react';
-import * as UserService from '../Service/UserService';
-import useLogOut from './useLogOut';
 import { useMutationCustomHook } from './useMutationCustom';
 
 const useDeleted = () => {
@@ -16,6 +17,12 @@ const useDeleted = () => {
         const response = await UserService.deletedUser(id);
         return response;
     });
+
+    const muteRemovePost = useMutationCustomHook(async ({ userId, postId }) => {
+        const response = await PostService.deletedPost(userId, postId);
+        return response;
+    });
+
     const deleteUser = async (id) => {
         dispatch(deleteStart());
         if (!id) {
@@ -46,13 +53,42 @@ const useDeleted = () => {
             dispatch(deleteError(error.message));
         }
     };
+
+    const deletePost = async (userId, postId) => {
+        if (!userId || !postId) {
+            return setErrorDeleted('Không thể tìm thấy thông tin userId hoặc postId');
+        }
+
+        try {
+            const dataRemovePost = { userId, postId };
+            const data = await muteRemovePost.mutateAsync(dataRemovePost);
+            if (data.status === 'ERR') {
+                setErrorDeleted(data.message);
+                timeIdRef.current = setTimeout(() => {
+                    setErrorDeleted(null); // Reset lỗi sau một thời gian
+                }, 2000);
+            } else if (data.status === 'OK' && data.success === true) {
+                setSuccessDeleted(data.message);
+                // Reset thông báo sau một thời gian
+                timeIdRef.current = setTimeout(() => {
+                    setSuccessDeleted(null); // Clear success message
+                }, 2000);
+            }
+        } catch (error) {
+            setErrorDeleted(error.message);
+            timeIdRef.current = setTimeout(() => {
+                setErrorDeleted(null); // Reset lỗi sau một thời gian
+            }, 2000);
+        }
+    };
+
     // Dọn dẹp timer khi component unmount
     useEffect(() => {
         return () => {
             clearTimeout(timeIdRef.current); // Clear timer if it exists
         };
     }, []);
-    return { deleteUser, errorDeleted, successDeleted };
+    return { deleteUser, deletePost, errorDeleted, successDeleted };
 };
 
 export default useDeleted;

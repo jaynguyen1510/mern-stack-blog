@@ -22,3 +22,15 @@ export const getAllPost = async (id, startIndex) => {
         throw error;
     }
 };
+
+export const deletedPost = async (userId, postId) => {
+    try {
+        const res = await axios.delete(`${apiUrl}/post/delete-post/${postId}/${userId}`, {
+            withCredentials: true, // Nếu cần gửi cookie
+        });
+        return res.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.error('Error delete post:', error);
+        throw error;
+    }
+};

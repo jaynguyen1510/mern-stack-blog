@@ -6,5 +6,10 @@ const router = express.Router();
 
 router.post("/create-post", verifyToken, PostController.createPost);
 router.get("/get-all-post", PostController.getAllPost);
+router.delete(
+  "/delete-post/:postId/:userId",
+  verifyToken,
+  PostController.deletePost
+);
 
 export default router;

@@ -48,4 +48,21 @@ const getAllPost = async (req, res, next) => {
     );
   }
 };
-export default { createPost, getAllPost };
+const deletePost = async (req, res, next) => {
+  const postId = req.params.postId;
+  const userIdFormParams = req.params.userId;
+  const idFormUser = req.user.id;
+  const isAdmin = req.user.isAdmin;
+
+  console.log("delete post", postId, userIdFormParams);
+
+  const result = { userIdFormParams, postId, idFormUser, isAdmin }; // Gộp postId và userId
+
+  try {
+    const postResponse = await PostService.deletePost(result);
+    return res.status(200).json(postResponse);
+  } catch (error) {
+    return next(customErrorHandler(res, 500, "Không thể xóa bài viết"));
+  }
+};
+export default { createPost, getAllPost, deletePost };

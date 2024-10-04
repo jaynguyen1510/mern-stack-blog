@@ -59,7 +59,7 @@ const useGetAllPost = (userId) => {
         }
     };
 
-    return { isLoading, error, userPosts, showMore, getMorePost };
+    return { isLoading, error, userPosts, showMore, getMorePost, setUserPosts };
 };
 
 export default useGetAllPost;

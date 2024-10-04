@@ -117,4 +117,40 @@ const getAllPosts = async (getAllDataPost) => {
   }
 };
 
-export default { createPost, getAllPosts };
+const deletePost = async (fromId) => {
+  // Tách postId và userId
+  const { userIdFromParams, postId, idFromUser, isAdmin } = fromId;
+  try {
+    if (userIdFromParams !== idFromUser || !isAdmin || postId === null) {
+      return {
+        status: "ERR",
+        success: false,
+        message: "Bạn không có quyền xóa bài viết này!",
+      };
+    } else {
+      const deletedPostFromId = await Post.findByIdAndDelete(postId);
+      if (deletedPostFromId === null) {
+        return {
+          status: "ERR",
+          success: false,
+          message: "Bài viết không tồn tại hoặc đã bị xóa rồi!",
+        };
+      }
+      return {
+        status: "OK",
+        success: true,
+        message: "Bạn đã xóa bài viết này!",
+        deletedPostFromId,
+      };
+    }
+  } catch (error) {
+    console.error("Error getting all posts:", error);
+    return {
+      status: "ERR",
+      success: false,
+      message: "Lỗi khi xóa danh sách bài viết: " + error.message,
+    };
+  }
+};
+
+export default { createPost, getAllPosts, deletePost };
