@@ -153,4 +153,54 @@ const deletePost = async (fromId) => {
   }
 };
 
-export default { createPost, getAllPosts, deletePost };
+const updatePost = async (updatedPostData) => {
+  const {
+    userIdFormParams,
+    idFormUser,
+    isAdmin,
+    postId,
+    title,
+    content,
+    category,
+    image,
+  } = updatedPostData;
+  console.log("Updating post", isAdmin, idFormUser, userIdFormParams);
+
+  if (!isAdmin || idFormUser !== userIdFormParams) {
+    return {
+      status: "ERR",
+      success: false,
+      message: "Bạn không có quyền cập nhật bài viết này!",
+    };
+  }
+  try {
+    const updateNewPost = await Post.findByIdAndUpdate(
+      postId, // ID của bài viết bạn muốn cập nhật
+      {
+        $set: {
+          // Cập nhật các trường trong bài viết
+          title: title, // Cập nhật trường "title" với giá trị mới
+          content: content, // Cập nhật trường "content" với giá trị mới
+          category: category, // Cập nhật trường "category" với giá trị mới
+          image: image, // Cập nhật trường "image" với giá trị mới
+        },
+      },
+      { new: true } // Tùy chọn này yêu cầu trả về tài liệu đã cập nhật
+    );
+    return {
+      status: "OK",
+      success: true,
+      message: "Bài viết đã được cập nhật thành công!",
+      data: updateNewPost, // Trả về bài viết đã được cập nhật
+    };
+  } catch (error) {
+    console.error("Error getting all posts:", error);
+    return {
+      status: "ERR",
+      success: false,
+      message: "Lỗi khi cập nhật danh sách bài viết: " + error.message,
+    };
+  }
+};
+
+export default { createPost, getAllPosts, deletePost, updatePost };

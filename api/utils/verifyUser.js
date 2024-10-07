@@ -6,6 +6,7 @@ dotenv.config();
 
 export const verifyToken = (req, res, next) => {
   const token = req.cookies.access_token;
+  console.log("verifyToken", token);
 
   if (!token) {
     return next(customErrorHandler(res, 400, "Token không tồn tại."));

@@ -18,6 +18,7 @@ const DashPostComponent = () => {
     const [loadRemovePost, setLoadRemovePost] = useState(false);
 
     const { isLoading, error, userPosts, showMore, getMorePost, setUserPosts } = useGetAllPost(isAdminTrue);
+
     const { deletePost, errorDeleted, successDeleted } = useDeleted();
     const navigate = useNavigate();
 

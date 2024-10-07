@@ -65,4 +65,28 @@ const deletePost = async (req, res, next) => {
     return next(customErrorHandler(res, 500, "Không thể xóa bài viết"));
   }
 };
-export default { createPost, getAllPost, deletePost };
+
+const updatePost = async (req, res, next) => {
+  const postId = req.params.postId;
+  const userIdFormParams = req.params.userId;
+  const { title, content, category, image } = req.body;
+  const isAdmin = req.user.isAdmin;
+  const idFormUser = req.user.id;
+  const result = {
+    userIdFormParams,
+    postId,
+    idFormUser,
+    isAdmin,
+    title,
+    content,
+    category,
+    image,
+  }; // Gộp postId và userId
+  try {
+    const updatePostResponse = await PostService.updatePost(result);
+    return res.status(200).json(updatePostResponse);
+  } catch (error) {
+    return next(customErrorHandler(res, 500, "Không thể cập nhật bài viết"));
+  }
+};
+export default { createPost, getAllPost, deletePost, updatePost };

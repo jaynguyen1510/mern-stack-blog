@@ -5,6 +5,7 @@ import FooterComponent from '../components/FooterComponent/FooterComponent';
 import PrivateDashBoard from '../components/PrivateDashBoard/PrivateDashBoard';
 import CreatePostPage from '../pages/CreatePostPage';
 import PrivateCreatePostAdMin from '../components/PrivateCreatePostAdMin/PrivateCreatePostAdMin';
+import UpdatePost from '../pages/UpdatePost';
 
 // Sử dụng lazy loading cho các trang
 const HomePage = lazy(() => import('./../pages/HomePage'));
@@ -32,6 +33,7 @@ export default function App() {
                         <Route path="/project-page" element={<ProjectPage />} />
                         <Route element={<PrivateCreatePostAdMin />}>
                             <Route path="/create-post" element={<CreatePostPage />} />
+                            <Route path="/update_post/:postId" element={<UpdatePost />} />
                         </Route>
                     </Routes>
                 </Suspense>

@@ -11,7 +11,6 @@ const useUpdateUser = () => {
     const timerIdRef = useRef(null); // Sử dụng useRef để lưu trữ timerId
 
     const mutateUpdateUser = useMutationCustomHook(async ({ id, formData }) => {
-        console.log('user', id, formData);
         const response = await UserService.updateUser(id, formData);
         return response; // Đảm bảo trả về response từ API
     });

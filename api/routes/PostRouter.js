@@ -11,5 +11,10 @@ router.delete(
   verifyToken,
   PostController.deletePost
 );
+router.put(
+  "/update-post/:postId/:userId",
+  verifyToken,
+  PostController.updatePost
+);
 
 export default router;

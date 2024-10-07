@@ -22,10 +22,33 @@ export const getAllPost = async (id, startIndex) => {
         throw error;
     }
 };
+export const getPostFormPostId = async (id, postId) => {
+    console.log('id', id);
+
+    try {
+        const res = await axios.get(`${apiUrl}/post/get-all-post?userId=${id}&postId=${postId}`);
+        return res.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.error('Error get postId :', error);
+        throw error;
+    }
+};
 
 export const deletedPost = async (userId, postId) => {
     try {
         const res = await axios.delete(`${apiUrl}/post/delete-post/${postId}/${userId}`, {
+            withCredentials: true, // Nếu cần gửi cookie
+        });
+        return res.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.error('Error delete post:', error);
+        throw error;
+    }
+};
+
+export const updatePost = async (postId, userId, data) => {
+    try {
+        const res = await axios.put(`${apiUrl}/post/update-post/${postId}/${userId}`, data, {
             withCredentials: true, // Nếu cần gửi cookie
         });
         return res.data; // Trả về dữ liệu từ response

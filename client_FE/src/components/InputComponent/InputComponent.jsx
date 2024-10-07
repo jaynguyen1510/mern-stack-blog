@@ -2,23 +2,21 @@ import { forwardRef } from 'react';
 import { TextInput } from 'flowbite-react';
 import PropTypes from 'prop-types';
 
-const InputComponent = forwardRef(function InputComponent(
-    { id, type, placeholder, onChange, defaultValue, className, autocomplete, accept, hidden, required, maxLength },
-    ref,
-) {
+const InputComponent = forwardRef(function InputComponent({ id, hidden, ...rests }, ref) {
     return (
         <TextInput
-            maxLength={maxLength}
             id={id}
-            accept={accept}
-            className={className}
-            type={type}
-            placeholder={placeholder}
-            onChange={onChange}
-            defaultValue={defaultValue}
-            autoComplete={autocomplete}
+            maxLength={rests.maxLength}
+            accept={rests.accept}
+            className={rests.className}
+            type={rests.type}
+            placeholder={rests.placeholder}
+            onChange={rests.onChange}
+            defaultValue={rests.defaultValue}
+            autoComplete={rests.autocomplete}
+            required={rests.required}
+            value={rests.value}
             ref={ref}
-            required={required}
             style={{ display: hidden ? 'none' : 'block' }} // Ẩn bằng style
         />
     );
