@@ -169,10 +169,64 @@ const deleteUser = async (userId) => {
     deletedUser,
   };
 };
+
+const getAllUsers = async (userId) => {
+  const isAdmin = userId.user.isAdmin;
+  if (!isAdmin) {
+    return {
+      status: "ERR",
+      success: false,
+      message: "Bạn không có quyền truy cập dữ liệu người dùng",
+    };
+  }
+
+  try {
+    const startIndex = parseInt(userId.query.startIndex) || 0;
+    const limit = parseInt(userId.query.limit) || 9;
+    const sorDirection = userId.query.sort === "asc" ? 1 : -1;
+    const getAllUser = await User.find({})
+      .sort({ createdAt: sorDirection })
+      .skip(startIndex)
+      .limit(limit);
+    const totalUser = await User.countDocuments();
+    const timeNow = new Date();
+    const oneMonthAgo = new Date(
+      timeNow.getFullYear(),
+      timeNow.getMonth() - 1,
+      timeNow.getDate()
+    );
+    const lasMontCreateUser = await User.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+    const userWithoutPassword = getAllUser.map((user) => {
+      const { password, ...rests } = user._doc;
+      return rests;
+    });
+
+    return {
+      status: "OK",
+      success: true,
+      message: "Lấy danh sách người dùng thành công!",
+      dataAllUser: {
+        data: userWithoutPassword,
+        totalUser: totalUser,
+        lasMontCreateUser: lasMontCreateUser,
+      },
+    };
+  } catch (error) {
+    return {
+      status: "ERR",
+      success: false,
+      message: error.message || "Lỗi khi lấy dữ liệu người dùng",
+    };
+  }
+};
+
 export default {
   createUserService,
   signInUser,
   signInGoogle,
   updateUser,
   deleteUser,
+  getAllUsers,
 };

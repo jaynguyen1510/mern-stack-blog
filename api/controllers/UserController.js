@@ -197,6 +197,19 @@ const logOutUser = async (req, res, next) => {
     return next(customErrorHandler(res, 500, "Lỗi khi xóa token"));
   }
 };
+
+const getAllUsers = async (req, res, next) => {
+  try {
+    // Gọi service để lấy danh sách người dùng
+    const response = await UserService.getAllUsers(req);
+    return res.status(200).json(response);
+  } catch (error) {
+    return next(
+      customErrorHandler(res, 500, " Lỗi khi lấy danh sách người dùng.")
+    );
+  }
+};
+
 export default {
   createUser,
   signInUser,
@@ -204,4 +217,5 @@ export default {
   updateUser,
   logOutUser,
   deleteUser,
+  getAllUsers,
 };

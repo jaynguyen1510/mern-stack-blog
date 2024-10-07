@@ -55,7 +55,6 @@ const createPost = async (dataPost) => {
 const getAllPosts = async (getAllDataPost) => {
   try {
     const startIndex = parseInt(getAllDataPost.query.startIndex) || 0;
-    console.log("Backend Start Index:", startIndex); // Đảm bảo rằng giá trị này được in ra
 
     const limit = parseInt(getAllDataPost.query.limit) || 9;
     const sorDirection = getAllDataPost.query.order === "asc" ? 1 : -1;
@@ -164,7 +163,6 @@ const updatePost = async (updatedPostData) => {
     category,
     image,
   } = updatedPostData;
-  console.log("Updating post", isAdmin, idFormUser, userIdFormParams);
 
   if (!isAdmin || idFormUser !== userIdFormParams) {
     return {
