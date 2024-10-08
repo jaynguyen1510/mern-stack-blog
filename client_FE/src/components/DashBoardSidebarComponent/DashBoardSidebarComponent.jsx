@@ -1,5 +1,5 @@
 import { Sidebar } from 'flowbite-react';
-import { HiArrowSmRight, HiDocumentText, HiUser } from 'react-icons/hi';
+import { HiArrowSmRight, HiDocumentText, HiUser, HiUserGroup } from 'react-icons/hi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useLogOut from '../../Hooks/useLogOut';
@@ -46,6 +46,17 @@ const DashBoardSidebarComponent = () => {
                         onClick={() => navigate('/dashboard?tab=post')}
                     >
                         Quản lý Bài viết
+                    </Sidebar.Item>
+                )}
+                {currentUser?.isAdmin && (
+                    <Sidebar.Item
+                        className="cursor-pointer"
+                        active={tab === 'user'}
+                        icon={HiUserGroup}
+                        labelColor={'dark'}
+                        onClick={() => navigate('/dashboard?tab=user')}
+                    >
+                        Quản lý người dùng
                     </Sidebar.Item>
                 )}
                 <Sidebar.Item className="cursor-pointer" icon={HiArrowSmRight} onClick={handleLogOut}>

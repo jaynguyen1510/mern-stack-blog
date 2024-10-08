@@ -23,8 +23,6 @@ export const getAllPost = async (id, startIndex) => {
     }
 };
 export const getPostFormPostId = async (id, postId) => {
-    console.log('id', id);
-
     try {
         const res = await axios.get(`${apiUrl}/post/get-all-post?userId=${id}&postId=${postId}`);
         return res.data; // Trả về dữ liệu từ response

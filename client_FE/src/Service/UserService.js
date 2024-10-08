@@ -11,7 +11,6 @@ export const signUpUser = async (data) => {
         throw error;
     }
 };
-
 export const signInUser = async (data) => {
     console.log('data', data);
     try {
@@ -24,7 +23,6 @@ export const signInUser = async (data) => {
         throw error;
     }
 };
-
 export const signInGoogle = async (data) => {
     try {
         const res = await axios.post(`${apiUrl}/user/google`, data, {
@@ -36,7 +34,6 @@ export const signInGoogle = async (data) => {
         throw error;
     }
 };
-
 export const logOutUser = async () => {
     try {
         const res = await axios.post(`${apiUrl}/user/log-out-user`, {}, { withCredentials: true });
@@ -46,7 +43,6 @@ export const logOutUser = async () => {
         throw error; // Để catch block trong hook có thể xử lý
     }
 };
-
 // UserService.js
 export const updateUser = async (id, data) => {
     console.log('updateUser', id, data);
@@ -61,7 +57,6 @@ export const updateUser = async (id, data) => {
     }
 };
 export const deletedUser = async (id) => {
-    console.log('id', id);
     try {
         const res = await axios.delete(`${apiUrl}/user/delete-profile/${id}`, {
             withCredentials: true, // Nếu cần gửi cookie
@@ -69,6 +64,17 @@ export const deletedUser = async (id) => {
         return res.data; // Trả về dữ liệu từ response
     } catch (error) {
         console.error('Error deleting user:', error);
+        throw error;
+    }
+};
+export const getAllUsers = async (idAdmin, startIndex) => {
+    try {
+        const response = await axios.get(`${apiUrl}/user/get-all-user?userId=${idAdmin}&startIndex=${startIndex}`, {
+            withCredentials: true, // Nếu cần gửi cookie
+        });
+        return response.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.error('Error get all user:', error);
         throw error;
     }
 };

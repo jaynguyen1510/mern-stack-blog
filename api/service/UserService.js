@@ -182,7 +182,7 @@ const getAllUsers = async (userId) => {
 
   try {
     const startIndex = parseInt(userId.query.startIndex) || 0;
-    const limit = parseInt(userId.query.limit) || 9;
+    const limit = parseInt(userId.query.limit) || 2;
     const sorDirection = userId.query.sort === "asc" ? 1 : -1;
     const getAllUser = await User.find({})
       .sort({ createdAt: sorDirection })
