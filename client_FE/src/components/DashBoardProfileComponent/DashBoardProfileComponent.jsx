@@ -5,6 +5,7 @@ import ButtonComponent from '../ButtonComponent/ButtonComponent';
 import useUpdateUser from '../../Hooks/useUpdateUser';
 import LoadingComponent from '../LoadingComponent/LoadingComponent';
 import useDeleted from '../../Hooks/useDeleted';
+import useLogOut from '../../Hooks/useLogOut';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
@@ -28,6 +29,8 @@ const DashBoardProfileComponent = () => {
     const dispatch = useDispatch();
     const fileInputRef = useRef();
     const navigate = useNavigate();
+    const logOut = useLogOut();
+    const timeoutRef = useRef(null); // Sử dụng useRef để lưu timeoutId
 
     const handleSelectImage = (e) => {
         const file = e.target.files[0];
@@ -75,10 +78,24 @@ const DashBoardProfileComponent = () => {
         setShowModal(false);
         try {
             await deleteUser(currentUser?._id);
+
+            // Lưu timeoutId vào timeoutRef
+            timeoutRef.current = setTimeout(() => {
+                logOut();
+            }, 2000);
         } catch (error) {
             dispatch(deleteError(error.message));
         }
     };
+
+    // Cleanup timeout khi component bị unmount
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current); // Xóa timeout khi component unmount
+            }
+        };
+    }, []);
 
     return (
         <div className="max-w-lg mx-auto p-3 w-full">

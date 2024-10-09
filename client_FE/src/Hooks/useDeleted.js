@@ -1,4 +1,3 @@
-import useLogOut from './useLogOut';
 import * as UserService from '../Service/UserService';
 import * as PostService from '../Service/PostService';
 import { useDispatch } from 'react-redux';
@@ -9,7 +8,6 @@ import { useMutationCustomHook } from './useMutationCustom';
 const useDeleted = () => {
     const [errorDeleted, setErrorDeleted] = useState(null);
     const [successDeleted, setSuccessDeleted] = useState(null);
-    const logOut = useLogOut();
     const dispatch = useDispatch();
     const timeIdRef = useRef(null);
 
@@ -28,6 +26,7 @@ const useDeleted = () => {
         if (!id) {
             return setErrorDeleted('Không thể tìm thấy id tài khoản');
         }
+
         try {
             const dataRemoveUser = { id };
 
@@ -38,21 +37,30 @@ const useDeleted = () => {
                 timeIdRef.current = setTimeout(() => {
                     dispatch(resetError());
                     dispatch(resetMessage());
-                    setErrorDeleted(data.message);
+                    setErrorDeleted(null); // Tắt thông báo sau 2 giây
                 }, 2000);
             } else if (data.status === 'OK' && data.success === true) {
                 dispatch(resetError());
                 dispatch(resetMessage());
                 setSuccessDeleted(data.message);
-                // Reset error and message after some time
+                // Tắt thông báo sau 2 giây
                 timeIdRef.current = setTimeout(() => {
-                    logOut();
-                }, 2000); // Adjust the delay as needed
+                    setSuccessDeleted(null);
+                }, 2000);
             }
         } catch (error) {
             dispatch(deleteError(error.message));
         }
     };
+
+    // Dọn dẹp timeout khi component unmount
+    useEffect(() => {
+        return () => {
+            if (timeIdRef.current) {
+                clearTimeout(timeIdRef.current);
+            }
+        };
+    }, []);
 
     const deletePost = async (userId, postId) => {
         if (!userId || !postId) {

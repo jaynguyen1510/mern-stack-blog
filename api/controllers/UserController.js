@@ -151,8 +151,11 @@ const updateUser = async (req, res, next) => {
 };
 
 const deleteUser = async (req, res, next) => {
-  // kiểm tra người dùng
-  if (req.user.id !== req.params.userId) {
+  const isAdmin = req.user.isAdmin;
+  console.log("Deleting user", isAdmin);
+
+  // kiểm tra quyền người dùng: Admin có thể xóa bất kỳ ai, hoặc người dùng tự xóa tài khoản của mình
+  if (req.user.id !== req.params.userId && !isAdmin) {
     return res
       .status(403)
       .json({ status: "ERR", message: "Không có quyền được xóa" });

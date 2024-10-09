@@ -80,7 +80,7 @@ const useGetAllUser = (userIdAdmin) => {
         }
     };
 
-    return { errorGetAllUsers, getUser, isLoading, error, showMore, getMoreUser };
+    return { errorGetAllUsers, getUser, isLoading, error, showMore, getMoreUser, setGetUser };
 };
 
 export default useGetAllUser;

@@ -8,19 +8,22 @@ import { formatDateToICT } from '../../../utils';
 import { useNavigate } from 'react-router-dom';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { FaCheck, FaTimes } from 'react-icons/fa';
+import useDeleted from '../../Hooks/useDeleted';
 
 const DashAllUserProfileComponent = () => {
     const { currentUser } = useSelector((state) => state.user);
     const [isAdminTrue, setIsAdminTrue] = useState(null);
     const [loadMoreNewUser, setLoadMoreNewUser] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-    // const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [removeUser, setRemoveUser] = useState(false);
+    const [newUserIdToDelete, setNewUserIdToDelete] = useState(null);
 
     const navigate = useNavigate();
 
     // Chỉ gọi useGetAllUser khi isAdminTrue có giá trị
-    const { errorGetAllUsers, getUser, isLoading, error, showMore, getMoreUser } = useGetAllUser(isAdminTrue);
+    const { errorGetAllUsers, getUser, isLoading, error, showMore, getMoreUser, setGetUser } =
+        useGetAllUser(isAdminTrue);
+    const { deleteUser, errorDeleted, successDeleted } = useDeleted();
 
     useEffect(() => {
         if (currentUser?.isAdmin === true) {
@@ -41,6 +44,26 @@ const DashAllUserProfileComponent = () => {
             setLoadMoreNewUser(false); // Kết thúc loading sau khi dữ liệu đã load xong
         } catch (error) {
             console.error(error.message);
+        }
+    };
+
+    // Cập nhật danh sách người dùng sau khi xóa thành công
+    const updateNewPostFromRemove = () => {
+        setRemoveUser(false);
+        setShowDeleteModal(false); // Đóng modal
+        setGetUser(getUser.filter((post) => post._id !== newUserIdToDelete));
+    };
+
+    const handleRemoveNewUser = async () => {
+        setRemoveUser(true);
+        try {
+            await deleteUser(newUserIdToDelete);
+
+            // Cập nhật danh sách người dùng sau khi xóa thành công
+            updateNewPostFromRemove();
+        } catch (error) {
+            console.error(error.message);
+            setRemoveUser(false); // Đặt lại trạng thái nếu xảy ra lỗi
         }
     };
 
@@ -66,7 +89,6 @@ const DashAllUserProfileComponent = () => {
                                 <Table.HeadCell>Tên </Table.HeadCell>
                                 <Table.HeadCell>Admin</Table.HeadCell>
                                 <Table.HeadCell>Xóa tài khoản</Table.HeadCell>
-                                <Table.HeadCell>Chỉnh sửa </Table.HeadCell>
                             </Table.Head>
                             {getUser?.map((newUser) => (
                                 <Table.Body key={newUser?._id} className="divide-y">
@@ -102,15 +124,10 @@ const DashAllUserProfileComponent = () => {
                                             <span
                                                 onClick={() => {
                                                     setShowDeleteModal(true);
-                                                    // setNewUserIdToDelete(newUser._id); // Lưu ID tài khỏa cần xóa
+                                                    setNewUserIdToDelete(newUser._id); // Lưu ID tài khỏa cần xóa
                                                 }}
                                             >
                                                 Xóa
-                                            </span>
-                                        </Table.Cell>
-                                        <Table.Cell className="text-teal-500 hover:underline cursor-pointer">
-                                            <span onClick={() => navigate(`/update_newUser/${newUser?._id}`)}>
-                                                Chỉnh sửa
                                             </span>
                                         </Table.Cell>
                                     </Table.Row>
@@ -122,46 +139,46 @@ const DashAllUserProfileComponent = () => {
                     <Modal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} popup size="md">
                         <Modal.Header />
                         <Modal.Body className="p-6 text-center">
-                            {/* {loadRemoveNewUser ? (
-                                 <LoadingComponent isLoading={loadRemoveNewUser}>
-                                     <p className="mt-2 text-gray-600 dark:text-gray-400">Đang xóa tài khỏa...</p>
-                                 </LoadingComponent>
-                             ) : ( */}
-                            <div>
-                                <ExclamationCircleIcon className="h-14 w-14 text-red-500 mb-4 mx-auto" />
-                                <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
-                                    Bạn có chắc là muốn xóa tài khỏa này không?
-                                </h3>
-                                <div className="flex justify-between gap-4 mt-6">
-                                    <ButtonComponent
-                                        color="bg-gray-400"
-                                        className="bg-gray-400 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out hover:bg-gray-600"
-                                        //  onClick={handleRemoveNewUser}
-                                    >
-                                        Tôi muốn Hủy
-                                    </ButtonComponent>
-                                    <ButtonComponent
-                                        color="failure"
-                                        className="bg-red-500 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out hover:bg-red-600"
-                                        onClick={() => setShowDeleteModal(false)}
-                                    >
-                                        Không muốn hủy
-                                    </ButtonComponent>
+                            {removeUser ? (
+                                <LoadingComponent isLoading={removeUser}>
+                                    <p className="mt-2 text-gray-600 dark:text-gray-400">Đang xóa tài khỏa...</p>
+                                </LoadingComponent>
+                            ) : (
+                                <div>
+                                    <ExclamationCircleIcon className="h-14 w-14 text-red-500 mb-4 mx-auto" />
+                                    <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+                                        Bạn có chắc là muốn xóa tài khỏa này không?
+                                    </h3>
+                                    <div className="flex justify-between gap-4 mt-6">
+                                        <ButtonComponent
+                                            color="bg-gray-400"
+                                            className="bg-gray-400 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out hover:bg-gray-600"
+                                            onClick={handleRemoveNewUser}
+                                        >
+                                            Tôi muốn Hủy
+                                        </ButtonComponent>
+                                        <ButtonComponent
+                                            color="failure"
+                                            className="bg-red-500 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out hover:bg-red-600"
+                                            onClick={() => setShowDeleteModal(false)}
+                                        >
+                                            Không muốn hủy
+                                        </ButtonComponent>
+                                    </div>
                                 </div>
-                            </div>
-                            {/* )} */}
+                            )}
                         </Modal.Body>
                     </Modal>
                     {/* Hiển thị thông báo thành công */}
-                    {/* {successDeleted && (
-                         <Alert className="mt-4 p-3 bg-green-100 border border-green-500 text-green-700 rounded">
-                             {successDeleted}
-                         </Alert>
-                     )} */}
+                    {successDeleted && (
+                        <Alert className="mt-4 p-3 bg-green-100 border border-green-500 text-green-700 rounded">
+                            {successDeleted}
+                        </Alert>
+                    )}
                     {/* Hiển thị thông báo lỗi */}
-                    {errorGetAllUsers && (
+                    {(errorGetAllUsers || errorDeleted) && (
                         <Alert className="mt-5 p-3 bg-red-100 border border-red-500 text-red-700 rounded">
-                            {errorGetAllUsers}
+                            {errorGetAllUsers || errorDeleted}
                         </Alert>
                     )}
                     {/* Nút Show More luôn cố định */}
