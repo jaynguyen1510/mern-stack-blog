@@ -13,3 +13,7 @@ export const categoryChange = (dataCategory) => {
 
     return categoryMap[dataCategory] || 'Không có chủ đề'; // Trả về giá trị tương ứng hoặc chuỗi rỗng nếu không tìm thấy
 };
+
+export const cleanTitle = (title) => {
+    return title?.replace(/\s+/g, ' ').trim(); // Thêm return ở đây
+};
