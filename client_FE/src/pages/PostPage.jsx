@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert } from 'flowbite-react';
 import { cleanTitle } from '../../utils';
+import CallToAction from '../components/CallToAction/CallToAction';
 
 const PostPage = () => {
     const { postSlug } = useParams();
@@ -71,6 +72,9 @@ const PostPage = () => {
                             className="p-3 max-w-2xl mx-auto w-full post-content"
                             dangerouslySetInnerHTML={{ __html: postFromSlug && postFromSlug?.content }}
                         ></div>
+                        <div className="max-w-4xl mx-auto w-full">
+                            <CallToAction />
+                        </div>
                     </main>
                     {/* Hiển thị thông báo thành công */}
                     {successPostSlug && (
