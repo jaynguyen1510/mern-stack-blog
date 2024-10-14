@@ -7,6 +7,7 @@ import CreatePostPage from '../pages/CreatePostPage';
 import PrivateCreatePostAdMin from '../components/PrivateCreatePostAdMin/PrivateCreatePostAdMin';
 import UpdatePost from '../pages/UpdatePost';
 import PostPage from '../pages/PostPage';
+import ScrollToTopComponent from '../components/ScrollToTopComponent/ScrollToTopComponent';
 
 // Sử dụng lazy loading cho các trang
 const HomePage = lazy(() => import('./../pages/HomePage'));
@@ -20,6 +21,7 @@ export default function App() {
     return (
         <>
             <BrowserRouter>
+                <ScrollToTopComponent />
                 <HeaderComponent />
                 {/* Sử dụng Suspense để hiển thị loading khi đang tải component */}
                 <Suspense fallback={<div>Loading...</div>}>

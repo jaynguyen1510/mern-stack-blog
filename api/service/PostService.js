@@ -62,6 +62,7 @@ const getAllPosts = async (getAllDataPost) => {
       ...(getAllDataPost.query.userId && {
         userId: getAllDataPost.query.userId,
       }),
+
       ...(getAllDataPost.query.category && {
         category: getAllDataPost.query.category,
       }),
@@ -74,10 +75,10 @@ const getAllPosts = async (getAllDataPost) => {
       ...(getAllDataPost.query.searchTerm && {
         $or: [
           {
-            title: { $regex: getAllDataPost.query.searchTerm, $option: "i" },
+            title: { $regex: getAllDataPost.query.searchTerm, $options: "i" },
           },
           {
-            content: { $regex: getAllDataPost.query.searchTerm, $option: "i" },
+            content: { $regex: getAllDataPost.query.searchTerm, $options: "i" },
           },
         ],
       }),
@@ -85,6 +86,7 @@ const getAllPosts = async (getAllDataPost) => {
       .sort({ updatedAt: sorDirection })
       .skip(startIndex)
       .limit(limit);
+
     const totalPost = await Post.countDocuments();
     const timeNow = new Date();
     const oneMonthAgo = new Date(
@@ -96,6 +98,7 @@ const getAllPosts = async (getAllDataPost) => {
     const lastMonthPost = await Post.countDocuments({
       createdAt: { $gte: oneMonthAgo },
     });
+
     return {
       status: "OK",
       success: true,

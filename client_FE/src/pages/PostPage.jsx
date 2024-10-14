@@ -1,20 +1,20 @@
 import useGetPostSlug from '../Hooks/useGetPostSlug';
 import LoadingComponent from '../components/LoadingComponent/LoadingComponent';
 import ButtonComponent from '../components/ButtonComponent/ButtonComponent';
-import { useEffect } from 'react';
+import CallToAction from '../components/CallToAction/CallToAction';
+import CommentSectionComponent from '../components/CommentSectionComponent/CommentSectionComponent';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert } from 'flowbite-react';
 import { cleanTitle } from '../../utils';
-import CallToAction from '../components/CallToAction/CallToAction';
+import { useEffect } from 'react';
 
 const PostPage = () => {
     const { postSlug } = useParams();
     const navigate = useNavigate();
     const { isLoadingGetPostSlug, errorGetPostSlug, postFromSlug, errorPostSlug, successPostSlug } =
         useGetPostSlug(postSlug);
-
     useEffect(() => {
-        console.log('postPage', postFromSlug);
+        console.log('postFromSlug', postFromSlug);
     }, [postFromSlug]);
 
     // định dạng ngày giờ
@@ -59,7 +59,7 @@ const PostPage = () => {
                         </ButtonComponent>
                         <img
                             src={postFromSlug && postFromSlug?.image}
-                            alt={postFromSlug && postFromSlug?.image}
+                            alt={postFromSlug && postFromSlug?.userName}
                             className="mt-10 p-3 max-h-[600px] w-full object-cover"
                         />
                         <div className="flex justify-between p-3 border-b border-slate-500 w-full max-w-2xl text-xs">
@@ -75,6 +75,7 @@ const PostPage = () => {
                         <div className="max-w-4xl mx-auto w-full">
                             <CallToAction />
                         </div>
+                        <CommentSectionComponent postId={postFromSlug?._id} />
                     </main>
                     {/* Hiển thị thông báo thành công */}
                     {successPostSlug && (
