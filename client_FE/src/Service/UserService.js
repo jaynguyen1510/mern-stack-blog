@@ -78,3 +78,12 @@ export const getAllUsers = async (idAdmin, startIndex) => {
         throw error;
     }
 };
+export const getUserById = async (userId) => {
+    try {
+        const responseUserById = await axios.get(`${apiUrl}/user/${userId}`);
+        return responseUserById.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.error('Error get info user:', error);
+        throw error;
+    }
+};

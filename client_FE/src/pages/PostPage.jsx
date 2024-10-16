@@ -6,16 +6,12 @@ import CommentSectionComponent from '../components/CommentSectionComponent/Comme
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert } from 'flowbite-react';
 import { cleanTitle } from '../../utils';
-import { useEffect } from 'react';
 
 const PostPage = () => {
     const { postSlug } = useParams();
     const navigate = useNavigate();
     const { isLoadingGetPostSlug, errorGetPostSlug, postFromSlug, errorPostSlug, successPostSlug } =
         useGetPostSlug(postSlug);
-    useEffect(() => {
-        console.log('postFromSlug', postFromSlug);
-    }, [postFromSlug]);
 
     // định dạng ngày giờ
     const formatDateToICT = (dateString) => {

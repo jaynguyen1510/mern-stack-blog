@@ -8,5 +8,6 @@ router.post(
   verifyToken,
   CommentController.createComment
 );
+router.get("/get-comment/:postId/", CommentController.getComment);
 
 export default router;

@@ -2,8 +2,6 @@ import { customErrorHandler } from "../utils/error.js";
 import CommentService from "../service/CommentService.js";
 
 const createComment = async (req, res, next) => {
-  console.log("createComment", req.body);
-
   // Lấy dữ liệu từ request
   const { content } = req.body; // Giả sử content là một chuỗi
   const userId = req.user.id; // Lấy userId từ req.user (người dùng đã xác thực)
@@ -30,4 +28,16 @@ const createComment = async (req, res, next) => {
     );
   }
 };
-export default { createComment };
+
+const getComment = async (req, res, next) => {
+  const postId = req.params.postId;
+  try {
+    const commentResponse = await CommentService.getComment(postId);
+    return res.status(200).json(commentResponse);
+  } catch (error) {
+    return next(
+      customErrorHandler(res, 500, "Không thể tải bình luận cho bài viết")
+    );
+  }
+};
+export default { createComment, getComment };

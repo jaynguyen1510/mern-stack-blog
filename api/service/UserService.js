@@ -222,6 +222,31 @@ const getAllUsers = async (userId) => {
   }
 };
 
+const getUserById = async (userId) => {
+  try {
+    const userById = await User.findById(userId);
+    if (!userById) {
+      return {
+        status: "ERR",
+        success: false,
+        message: "Người dùng không tồn tại",
+      };
+    }
+    const { password, ...rest } = userById._doc;
+    return {
+      status: "OK",
+      success: true,
+      message: "Lấy thông tin người dùng thành công",
+      userById: rest, // Trả về thông tin người dùng đã loại bỏ password
+    };
+  } catch (error) {
+    return {
+      status: "ERR",
+      success: false,
+      message: error.message || "Lỗi khi lấy thông tin người dùng",
+    };
+  }
+};
 export default {
   createUserService,
   signInUser,
@@ -229,4 +254,5 @@ export default {
   updateUser,
   deleteUser,
   getAllUsers,
+  getUserById,
 };

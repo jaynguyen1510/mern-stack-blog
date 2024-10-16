@@ -213,6 +213,18 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
+const getUserById = async (req, res, next) => {
+  const userId = req.params.userId;
+  try {
+    // Gọi service để lấy thông tin người dùng theo id
+    const response = await UserService.getUserById(userId);
+    return res.status(200).json(response);
+  } catch (error) {
+    return next(
+      customErrorHandler(res, 500, "Lỗi khi lấy thông tin người dùng.")
+    );
+  }
+};
 export default {
   createUser,
   signInUser,
@@ -221,4 +233,5 @@ export default {
   logOutUser,
   deleteUser,
   getAllUsers,
+  getUserById,
 };

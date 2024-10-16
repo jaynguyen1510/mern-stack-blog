@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types';
 import ButtonComponent from '../ButtonComponent/ButtonComponent';
 import useCreateComment from '../../Hooks/useCreateComment';
+import useGetAllComment from '../../Hooks/useGetAllComment';
+import GetCommentComponent from '../GetCommentComponent/GetCommentComponent';
+import LoadingComponent from '../LoadingComponent/LoadingComponent';
+
 import { Textarea, Toast } from 'flowbite-react';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -14,12 +18,18 @@ const CommentSectionComponent = ({ postId }) => {
     const { createComment } = useCreateComment();
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
-    const [toastType, setToastType] = useState('success'); // 'success' hoặc 'error'
-    const toastTimeoutRef = useRef(null); // Tham chiếu để lưu timeout
+    const [toastType, setToastType] = useState('success'); // 'success' or 'error'
+    const toastTimeoutRef = useRef(null); // Reference to store timeout
+    const { commentData, getCommentError, isLoading, error } = useGetAllComment(postId);
+    const [localComments, setLocalComments] = useState([]); // Initialize as empty array
 
     useEffect(() => {
-        console.log('postId', postId);
-    }, [postId]); // Chỉ chạy khi postId thay đổi
+        if (Array.isArray(commentData)) {
+            setLocalComments(commentData); // Update only if commentData is an array
+        } else {
+            setLocalComments([]); // Fallback to an empty array if not valid
+        }
+    }, [commentData]);
 
     const handleOnChangeComments = (e) => {
         setComment(e.target.value);
@@ -35,7 +45,12 @@ const CommentSectionComponent = ({ postId }) => {
 
         try {
             await createComment(newCommentData);
-            setComment(''); // Reset comment sau khi gửi
+            setComment(''); // Reset comment after submission
+            // Update localComments to display the new comment immediately
+            setLocalComments((prevComments) => [
+                ...prevComments,
+                { ...newCommentData, _id: Date.now().toString() }, // Add new comment to the list
+            ]);
             setToastMessage('Bình luận của bạn đã được đăng thành công!');
             setToastType('success');
         } catch (error) {
@@ -43,9 +58,9 @@ const CommentSectionComponent = ({ postId }) => {
             setToastMessage('Có lỗi xảy ra khi gửi bình luận. Vui lòng thử lại.');
             setToastType('error');
         } finally {
-            setShowToast(true); // Hiện thông báo
+            setShowToast(true); // Show toast message
 
-            // Tự động ẩn thông báo sau 2 giây
+            // Automatically hide toast after 2 seconds
             toastTimeoutRef.current = setTimeout(() => {
                 setShowToast(false);
             }, 2000);
@@ -55,7 +70,7 @@ const CommentSectionComponent = ({ postId }) => {
     // Cleanup function
     useEffect(() => {
         return () => {
-            clearTimeout(toastTimeoutRef.current); // Xóa timeout nếu component unmount
+            clearTimeout(toastTimeoutRef.current); // Clear timeout if component unmounts
         };
     }, []);
 
@@ -129,12 +144,38 @@ const CommentSectionComponent = ({ postId }) => {
                     </div>
                 </form>
             )}
+            <>
+                {isLoading ? ( // Show LoadingComponent when loading
+                    <LoadingComponent isLoading={isLoading} />
+                ) : (
+                    <>
+                        {localComments.length === 0 ? (
+                            <p className="text-sm text-gray-500 my-5">Chưa có bình luận nào</p>
+                        ) : (
+                            <div className="text-sm my-5 flex items-center gap-1">
+                                <p>Bình luận</p>
+                                <div className="border border-gray-400 py-1 px-2 rounded-sm">
+                                    <p>{localComments.length}</p>
+                                </div>
+                            </div>
+                        )}
+                        {/* Display error message if any */}
+                        {getCommentError ||
+                            (error && (
+                                <p className="text-red-500">Có lỗi xảy ra: {getCommentError.message || error}</p>
+                            ))}
+                        {localComments.map((comment) => (
+                            <GetCommentComponent key={comment?._id} comment={comment} />
+                        ))}
+                    </>
+                )}
+            </>
         </div>
     );
 };
 
 CommentSectionComponent.propTypes = {
-    postId: PropTypes.string, // Id của bài viết
+    postId: PropTypes.string, // Id of the post
 };
 
 export default CommentSectionComponent;

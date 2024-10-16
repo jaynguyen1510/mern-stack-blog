@@ -15,4 +15,5 @@ router.delete(
   UserController.deleteUser
 );
 router.get("/get-all-user", verifyToken, UserController.getAllUsers);
+router.get("/:userId", UserController.getUserById);
 export default router;

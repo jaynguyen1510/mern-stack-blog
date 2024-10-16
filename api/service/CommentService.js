@@ -32,5 +32,24 @@ const createComment = async (commentData) => {
     };
   }
 };
+const getComment = async (postId) => {
+  try {
+    const getComment = await Comments.find({ postId }).sort({ createdAt: -1 });
+    return {
+      status: "OK",
+      success: true,
+      message: "Lấy comment thành công",
+      data: getComment, // Trả về thông tin comment đã lấy
+    };
+  } catch (error) {
+    console.error("Error creating comment:", error);
 
-export default { createComment };
+    // Trả về lỗi khi lấy comment
+    return {
+      status: "ERR",
+      success: false,
+      message: "Lỗi khi lấy comment: " + error.message, // Trả về thông báo lỗi chi tiết
+    };
+  }
+};
+export default { createComment, getComment };
