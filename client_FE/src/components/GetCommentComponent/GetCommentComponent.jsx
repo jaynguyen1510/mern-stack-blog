@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import moment from 'moment/moment';
 import useGetUserById from '../../Hooks/useGetUserById';
-import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const GetCommentComponent = ({ comment, onLike }) => {
@@ -9,22 +8,6 @@ const GetCommentComponent = ({ comment, onLike }) => {
     // Gọi hook để lấy thông tin người dùng
     const userId = comment.userId;
     const { userIdData, errorUserId, isLoadingUserById } = useGetUserById(userId);
-    const [getDataUserComments, setGetDataUserComments] = useState(userIdData);
-
-    // Lấy thông tin người dùng theo id và lưu vào state nếu có dữ liệu
-    useEffect(() => {
-        if (userIdData) {
-            setGetDataUserComments({
-                avatar: userIdData.avatar || '',
-                createdAt: userIdData.createdAt || '',
-                email: userIdData.email || '',
-                updatedAt: userIdData.updatedAt || '',
-                isAdmin: userIdData.isAdmin || false,
-                userName: userIdData.userName || 'ẩn danh',
-                _id: userIdData._id || '',
-            });
-        }
-    }, [userIdData, setGetDataUserComments]);
 
     // Hàm để xử lý thời gian bằng moment
     const handleMoment = (dataCreated) => {
@@ -42,14 +25,14 @@ const GetCommentComponent = ({ comment, onLike }) => {
                     <div className="flex-shrink-0">
                         <img
                             className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700"
-                            src={getDataUserComments?.avatar || 'default-avatar-url'}
-                            alt={getDataUserComments?.userName || 'ẩn danh'}
+                            src={userIdData?.avatar || 'default-avatar-url'}
+                            alt={userIdData?.userName || 'ẩn danh'}
                         />
                     </div>
                     <div className="ml-3 flex-1">
                         <div className="flex items-center mb-1">
                             <span className="font-semibold text-sm truncate text-gray-800 dark:text-gray-200">
-                                {getDataUserComments ? `@${getDataUserComments.userName}` : 'ẩn danh'}
+                                {userIdData ? `@${userIdData.userName}` : 'ẩn danh'}
                             </span>
                             <span className="text-gray-500 text-xs ml-2 dark:text-gray-400">
                                 {handleMoment(comment.createdAt)}
