@@ -52,4 +52,50 @@ const getComment = async (postId) => {
     };
   }
 };
-export default { createComment, getComment };
+
+const likeComment = async ({ commentId, userId }) => {
+  try {
+    const comment = await Comments.findById(commentId);
+    if (!comment) {
+      return {
+        status: "ERR",
+        success: false,
+        message: "Comment không tồn tại",
+      };
+    }
+
+    const userIndex = comment.likes.indexOf(userId);
+    let actionMessage;
+
+    if (userIndex === -1) {
+      // Thêm like
+      comment.numberOfLikes += 1;
+      comment.likes.push(userId);
+      actionMessage = "Bạn đã like bình luận này";
+    } else {
+      // Bỏ like
+      comment.numberOfLikes -= 1;
+      comment.likes.splice(userIndex, 1);
+      actionMessage = "Bạn đã bỏ like bình luận này";
+    }
+
+    await comment.save();
+
+    return {
+      status: "OK",
+      success: true,
+      message: actionMessage, // Trả về thông báo dựa trên hành động like/unlike
+      data: comment, // Trả về thông tin comment đã thay đổi like
+    };
+  } catch (error) {
+    console.error("Error put like:", error);
+
+    return {
+      status: "ERR",
+      success: false,
+      message: "Lỗi khi thực hiện hành động: " + error.message, // Trả về thông báo lỗi chi tiết
+    };
+  }
+};
+
+export default { createComment, getComment, likeComment };

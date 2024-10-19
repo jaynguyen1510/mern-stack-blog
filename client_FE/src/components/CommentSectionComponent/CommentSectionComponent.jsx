@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FaCheckCircle, FaExclamationCircle } from 'react-icons/fa'; // Import icon
+import useLikeComment from '../../Hooks/useLikeComment';
 
 const CommentSectionComponent = ({ postId }) => {
     const { currentUser } = useSelector((state) => state.user);
@@ -21,11 +22,14 @@ const CommentSectionComponent = ({ postId }) => {
     const [toastType, setToastType] = useState('success'); // 'success' or 'error'
     const toastTimeoutRef = useRef(null); // Reference to store timeout
     const { commentData, getCommentError, isLoading, error } = useGetAllComment(postId);
+    const { putLikeComment, likeData, createError } = useLikeComment();
     const [localComments, setLocalComments] = useState([]); // Initialize as empty array
+    const [likeCount, setLikeCount] = useState(likeData); // Initialize like count as 0
 
     useEffect(() => {
+        // Update local comments when commentData changes
         if (Array.isArray(commentData)) {
-            setLocalComments(commentData); // Update only if commentData is an array
+            setLocalComments(commentData);
         } else {
             setLocalComments([]); // Fallback to an empty array if not valid
         }
@@ -43,10 +47,16 @@ const CommentSectionComponent = ({ postId }) => {
             content: comment,
         };
 
+        if (!comment) {
+            setToastMessage('Vui lòng nhập nội dung bình luận.');
+            setToastType('error');
+            setShowToast(true);
+            return; // Early return if comment is undefined
+        }
+
         try {
             await createComment(newCommentData);
             setComment(''); // Reset comment after submission
-            // Update localComments to display the new comment immediately
             setLocalComments((prevComments) => [
                 ...prevComments,
                 { ...newCommentData, _id: Date.now().toString() }, // Add new comment to the list
@@ -64,6 +74,47 @@ const CommentSectionComponent = ({ postId }) => {
             toastTimeoutRef.current = setTimeout(() => {
                 setShowToast(false);
             }, 2000);
+        }
+    };
+
+    useEffect(() => {
+        setLikeCount({
+            content: likeData?.content,
+            createdAt: likeData?.createdAt,
+            likes: likeData?.likes,
+            numberOfLikes: likeData?.numberOfLikes,
+            postId: likeData?.postId,
+            updatedAt: likeData?.updatedAt,
+            userId: likeData?.userId,
+            _id: likeData?._id,
+        });
+    }, [likeData]);
+
+    useEffect(() => {
+        if (likeCount && likeCount._id) {
+            setLocalComments((prevComments) =>
+                prevComments.map((comment) => {
+                    if (comment._id === likeCount._id) {
+                        return { ...comment, ...likeCount };
+                    }
+                    return comment;
+                }),
+            );
+        }
+    }, [likeCount]);
+
+    const handleLike = async (commentId) => {
+        if (!commentId) {
+            console.error('Invalid commentId:', commentId);
+            return;
+        }
+        try {
+            await putLikeComment(commentId);
+        } catch (error) {
+            console.error('Error putting like:', error);
+            setToastMessage(error.message || 'Có lỗi xảy ra khi thích bình luận.');
+            setToastType('error');
+            setShowToast(true); // Show toast message
         }
     };
 
@@ -102,7 +153,7 @@ const CommentSectionComponent = ({ postId }) => {
             )}
             {currentUser ? (
                 <div className="flex items-center gap-1 my-5 text-gray-500 text-sm">
-                    <p>Bình luận bằng tài khoản : </p>
+                    <p>Bình luận bằng tài khoản: </p>
                     <img
                         src={currentUser?.avatar}
                         alt={currentUser?.userName}
@@ -144,32 +195,33 @@ const CommentSectionComponent = ({ postId }) => {
                     </div>
                 </form>
             )}
-            <>
-                {isLoading ? ( // Show LoadingComponent when loading
-                    <LoadingComponent isLoading={isLoading} />
-                ) : (
-                    <>
-                        {localComments.length === 0 ? (
-                            <p className="text-sm text-gray-500 my-5">Chưa có bình luận nào</p>
-                        ) : (
-                            <div className="text-sm my-5 flex items-center gap-1">
-                                <p>Bình luận</p>
-                                <div className="border border-gray-400 py-1 px-2 rounded-sm">
-                                    <p>{localComments.length}</p>
-                                </div>
+            {isLoading ? (
+                <LoadingComponent isLoading={isLoading} />
+            ) : (
+                <>
+                    {localComments.length === 0 ? (
+                        <p className="text-sm text-gray-500 my-5">Chưa có bình luận nào</p>
+                    ) : (
+                        <div className="text-sm my-5 flex items-center gap-1">
+                            <p>Bình luận</p>
+                            <div className="border border-gray-400 py-1 px-2 rounded-sm">
+                                <p>{localComments.length}</p>
                             </div>
-                        )}
-                        {/* Display error message if any */}
-                        {getCommentError ||
-                            (error && (
-                                <p className="text-red-500">Có lỗi xảy ra: {getCommentError.message || error}</p>
-                            ))}
-                        {localComments.map((comment) => (
-                            <GetCommentComponent key={comment?._id} comment={comment} />
+                        </div>
+                    )}
+                    {/* Display error message if any */}
+                    {getCommentError ||
+                        createError ||
+                        (error && (
+                            <p className="text-red-500">
+                                Có lỗi xảy ra: {getCommentError.message || error || createError}
+                            </p>
                         ))}
-                    </>
-                )}
-            </>
+                    {localComments.map((comment) => (
+                        <GetCommentComponent key={comment?._id} comment={comment} onLike={handleLike} />
+                    ))}
+                </>
+            )}
         </div>
     );
 };

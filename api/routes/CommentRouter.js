@@ -9,5 +9,10 @@ router.post(
   CommentController.createComment
 );
 router.get("/get-comment/:postId/", CommentController.getComment);
+router.put(
+  "/like-comment/:commentId/",
+  verifyToken,
+  CommentController.likeComment
+);
 
 export default router;

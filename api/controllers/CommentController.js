@@ -40,4 +40,24 @@ const getComment = async (req, res, next) => {
     );
   }
 };
-export default { createComment, getComment };
+const likeComment = async (req, res, next) => {
+  const commentId = req.params.commentId;
+  const userId = req.user?.id;
+  console.log("userId", userId);
+
+  if (!commentId) {
+    return {
+      status: "ERR",
+      success: false,
+      message: "Id bình luận không hợp lệ.",
+    };
+  }
+  const total = { commentId, userId };
+  try {
+    const likeResponse = await CommentService.likeComment(total);
+    return res.status(200).json(likeResponse);
+  } catch (error) {
+    return next(customErrorHandler(res, 500, "Lỗi không thể put like "));
+  }
+};
+export default { createComment, getComment, likeComment };

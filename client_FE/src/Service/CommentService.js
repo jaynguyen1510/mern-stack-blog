@@ -24,3 +24,19 @@ export const getAllComments = async (postId) => {
         throw error;
     }
 };
+
+export const putLike = async (commentId) => {
+    console.log('comment', commentId);
+
+    try {
+        const likeResponse = await axios.put(
+            `${apiUrl}/comment/like-comment/${commentId}`,
+            {}, // Để tránh lỗi, bạn có thể để object rỗng hoặc bỏ qua data nếu không cần
+            { withCredentials: true }, // Cấu hình để gửi cookie
+        );
+        return likeResponse.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.log('Error getting comments', error);
+        throw error;
+    }
+};
