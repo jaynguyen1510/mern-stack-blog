@@ -8,11 +8,16 @@ router.post(
   verifyToken,
   CommentController.createComment
 );
-router.get("/get-comment/:postId/", CommentController.getComment);
+router.get("/get-comment/:postId", CommentController.getComment);
 router.put(
-  "/like-comment/:commentId/",
+  "/like-comment/:commentId",
   verifyToken,
   CommentController.likeComment
+);
+router.put(
+  "/edit-comment/:commentId",
+  verifyToken,
+  CommentController.editComment
 );
 
 export default router;

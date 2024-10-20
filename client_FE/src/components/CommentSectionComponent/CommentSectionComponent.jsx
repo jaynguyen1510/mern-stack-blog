@@ -118,6 +118,17 @@ const CommentSectionComponent = ({ postId }) => {
         }
     };
 
+    const handleEdit = async (comment, editedContent) => {
+        setLocalComments(
+            localComments.map(
+                (newComment) =>
+                    newComment._id === comment._id
+                        ? { ...newComment, content: editedContent } // Cập nhật bình luận nếu ID trùng khớp
+                        : newComment, // Giữ nguyên bình luận nếu ID không trùng
+            ),
+        );
+    };
+
     // Cleanup function
     useEffect(() => {
         return () => {
@@ -218,7 +229,12 @@ const CommentSectionComponent = ({ postId }) => {
                             </p>
                         ))}
                     {localComments.map((comment) => (
-                        <GetCommentComponent key={comment?._id} comment={comment} onLike={handleLike} />
+                        <GetCommentComponent
+                            key={comment?._id}
+                            comment={comment}
+                            onLike={handleLike}
+                            onEdit={handleEdit}
+                        />
                     ))}
                 </>
             )}

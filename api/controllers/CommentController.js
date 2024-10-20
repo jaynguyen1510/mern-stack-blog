@@ -43,7 +43,6 @@ const getComment = async (req, res, next) => {
 const likeComment = async (req, res, next) => {
   const commentId = req.params.commentId;
   const userId = req.user?.id;
-  console.log("userId", userId);
 
   if (!commentId) {
     return {
@@ -60,4 +59,28 @@ const likeComment = async (req, res, next) => {
     return next(customErrorHandler(res, 500, "Lỗi không thể put like "));
   }
 };
-export default { createComment, getComment, likeComment };
+
+const editComment = async (req, res, next) => {
+  const commentId = req.params.commentId;
+  const userId = req.user?.id;
+  const isAdmin = req.user.isAdmin;
+  const content = req.body.content;
+
+  if (!commentId) {
+    return {
+      status: "ERR",
+      success: false,
+      message: "Id bình luận không hợp lệ.",
+    };
+  }
+  const total = { commentId, userId, isAdmin, content };
+  try {
+    const likeResponse = await CommentService.editComment(total);
+    return res.status(200).json(likeResponse);
+  } catch (error) {
+    return next(
+      customErrorHandler(res, 500, "Lỗi không thể chỉnh sửa comment")
+    );
+  }
+};
+export default { createComment, getComment, likeComment, editComment };

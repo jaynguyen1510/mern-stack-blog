@@ -40,3 +40,20 @@ export const putLike = async (commentId) => {
         throw error;
     }
 };
+export const editComment = async (commentId, { content }) => {
+    console.log('Edit Comment', commentId, content); // Ghi lại thông tin comment được chỉnh sửa
+
+    try {
+        const editComment = await axios.put(
+            `${apiUrl}/comment/edit-comment/${commentId}`,
+            {
+                content,
+            },
+            { withCredentials: true }, // Cấu hình để gửi cookie
+        );
+        return editComment.data;
+    } catch (error) {
+        console.log('Error edit comments', error);
+        throw error;
+    }
+};

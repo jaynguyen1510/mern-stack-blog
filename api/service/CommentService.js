@@ -97,5 +97,42 @@ const likeComment = async ({ commentId, userId }) => {
     };
   }
 };
+const editComment = async ({ commentId, userId, isAdmin, content }) => {
+  try {
+    const comment = await Comments.findById(commentId);
+    if (!comment) {
+      return {
+        status: "ERR",
+        success: false,
+        message: "Comment không tồn tại",
+      };
+    }
+    if (comment.userId !== userId && !isAdmin) {
+      return {
+        status: "ERR",
+        success: false,
+        message: "Bạn không có quyền sửa bình luận này",
+      };
+    }
+    const editComment = await Comments.findByIdAndUpdate(
+      commentId,
+      { content: content },
+      { new: true }
+    );
+    return {
+      status: "OK",
+      success: true,
+      message: "Sửa comment thành công",
+      data: editComment, // Trả về thông tin comment đã sửa
+    };
+  } catch (error) {
+    console.error("Error put like:", error);
 
-export default { createComment, getComment, likeComment };
+    return {
+      status: "ERR",
+      success: false,
+      message: "Lỗi khi thực hiện hành động: " + error.message, // Trả về thông báo lỗi chi tiết
+    };
+  }
+};
+export default { createComment, getComment, likeComment, editComment };
