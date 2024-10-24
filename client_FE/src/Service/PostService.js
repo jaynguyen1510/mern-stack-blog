@@ -65,3 +65,12 @@ export const updatePost = async (postId, userId, data) => {
         throw error;
     }
 };
+export const getPostLimit = async () => {
+    try {
+        const res = await axios.get(`${apiUrl}/post/get-all-post?limit=3`);
+        return res.data;
+    } catch (error) {
+        console.error('Error get postId :', error);
+        throw error;
+    }
+};

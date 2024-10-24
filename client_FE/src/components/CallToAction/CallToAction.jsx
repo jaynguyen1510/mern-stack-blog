@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import ButtonComponent from '../ButtonComponent/ButtonComponent';
 
 const CallToAction = () => {
@@ -31,4 +32,4 @@ const CallToAction = () => {
     );
 };
 
-export default CallToAction;
+export default memo(CallToAction);

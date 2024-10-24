@@ -1,32 +1,25 @@
 import * as PostService from '../Service/PostService';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const useGetPostSlug = (Slug) => {
     const [postFromSlug, setPostFromSlug] = useState([]);
     const [errorPostSlug, setErrorPostSlug] = useState(null);
     const [successPostSlug, setSuccessPostSlug] = useState(null);
-    const hasFetchedRef = useRef(false); // Sử dụng useRef để theo dõi việc đã gọi API
-    const timeoutRef = useRef(null); // Sử dụng useRef để lưu giữ ID của setTimeout
 
     const getPostSlug = async () => {
         if (!Slug) {
             setErrorPostSlug('Không có định danh của bài post');
-            return;
+            return null;
         }
         try {
-            // Kiểm tra nếu dữ liệu đã được lấy
-            if (hasFetchedRef.current) {
-                return; // Nếu đã lấy, không cần gọi API nữa
-            }
             const response = await PostService.getPostBySlug(Slug);
             if (response?.status === 'ERR' && response?.success === false) {
                 setErrorPostSlug(response.message);
-                return;
+                return null;
             } else if (response?.status === 'OK' && response?.success === true) {
                 setSuccessPostSlug(response.message);
                 setPostFromSlug(response?.dataPost.data[0]);
-                hasFetchedRef.current = true;
                 return response?.dataPost; // Trả về dữ liệu bài viết
             }
         } catch (error) {
@@ -38,15 +31,17 @@ const useGetPostSlug = (Slug) => {
     // Sử dụng useQuery với object form
     const { isLoading: isLoadingGetPostSlug, error: errorGetPostSlug } = useQuery({
         queryKey: ['getPostId', Slug],
-        queryFn: getPostSlug, // Hàm này sẽ có quyền truy cập vào userId và postId
-        enabled: !!Slug && !hasFetchedRef.current, // Chỉ cho phép gọi API nếu chưa lấy dữ liệu
+        queryFn: getPostSlug,
+        enabled: !!Slug, // Chỉ cho phép gọi API nếu Slug tồn tại
     });
 
-    // Cleanup timeout khi có thông báo lỗi
+    // Cleanup timeout cho thông báo lỗi/thành công
     useEffect(() => {
+        let timeout; // Đặt timeout ở đây để không bị mất giữa các lần render
+
         if (errorPostSlug || successPostSlug) {
-            // Thiết lập timeout để tự động xóa lỗi sau 2 giây
-            timeoutRef.current = setTimeout(() => {
+            // Thiết lập timeout để tự động xóa thông báo sau 2 giây
+            timeout = setTimeout(() => {
                 setErrorPostSlug(null);
                 setSuccessPostSlug(null);
             }, 2000);
@@ -54,9 +49,9 @@ const useGetPostSlug = (Slug) => {
 
         // Cleanup function để xóa timeout
         return () => {
-            clearTimeout(timeoutRef.current);
+            clearTimeout(timeout);
         };
-    }, [errorPostSlug, successPostSlug]); // Chỉ chạy effect này khi errorPostSlug thay đổi
+    }, [errorPostSlug, successPostSlug]); // Chỉ chạy effect này khi errorPostSlug hoặc successPostSlug thay đổi
 
     return { isLoadingGetPostSlug, errorGetPostSlug, postFromSlug, errorPostSlug, successPostSlug };
 };
