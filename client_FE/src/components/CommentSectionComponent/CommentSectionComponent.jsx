@@ -4,13 +4,15 @@ import useCreateComment from '../../Hooks/useCreateComment';
 import useGetAllComment from '../../Hooks/useGetAllComment';
 import GetCommentComponent from '../GetCommentComponent/GetCommentComponent';
 import LoadingComponent from '../LoadingComponent/LoadingComponent';
+import useLikeComment from '../../Hooks/useLikeComment';
 
-import { Textarea, Toast } from 'flowbite-react';
-import { useEffect, useRef, useState } from 'react';
+import { Modal, Textarea, Toast } from 'flowbite-react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FaCheckCircle, FaExclamationCircle } from 'react-icons/fa'; // Import icon
-import useLikeComment from '../../Hooks/useLikeComment';
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import useDeletedComment from '../../Hooks/useDeletedComment';
 
 const CommentSectionComponent = ({ postId }) => {
     const { currentUser } = useSelector((state) => state.user);
@@ -19,12 +21,15 @@ const CommentSectionComponent = ({ postId }) => {
     const { createComment } = useCreateComment();
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+    const [showModal, setShowModal] = useState(false);
+    const [newIdDeleted, setNewIdDeleted] = useState(null);
     const [toastType, setToastType] = useState('success'); // 'success' or 'error'
     const toastTimeoutRef = useRef(null); // Reference to store timeout
     const { commentData, getCommentError, isLoading, error } = useGetAllComment(postId);
     const { putLikeComment, likeData, createError } = useLikeComment();
     const [localComments, setLocalComments] = useState([]); // Initialize as empty array
     const [likeCount, setLikeCount] = useState(likeData); // Initialize like count as 0
+    const { deletedComment, errorDeleted } = useDeletedComment();
 
     useEffect(() => {
         // Update local comments when commentData changes
@@ -103,31 +108,65 @@ const CommentSectionComponent = ({ postId }) => {
         }
     }, [likeCount]);
 
-    const handleLike = async (commentId) => {
-        if (!commentId) {
-            console.error('Invalid commentId:', commentId);
-            return;
-        }
-        try {
-            await putLikeComment(commentId);
-        } catch (error) {
-            console.error('Error putting like:', error);
-            setToastMessage(error.message || 'Có lỗi xảy ra khi thích bình luận.');
-            setToastType('error');
-            setShowToast(true); // Show toast message
-        }
-    };
+    const handleLike = useCallback(
+        async (commentId) => {
+            if (!commentId) {
+                console.error('Invalid commentId:', commentId);
+                return;
+            }
+            try {
+                await putLikeComment(commentId);
+            } catch (error) {
+                console.error('Error putting like:', error);
+                setToastMessage(error.message || 'Có lỗi xảy ra khi thích bình luận.');
+                setToastType('error');
+                setShowToast(true); // Show toast message
+            }
+        },
+        [putLikeComment],
+    ); // Chỉ tạo lại hàm nếu putLikeComment thay đổi
 
-    const handleEdit = async (comment, editedContent) => {
-        setLocalComments(
-            localComments.map(
-                (newComment) =>
-                    newComment._id === comment._id
-                        ? { ...newComment, content: editedContent } // Cập nhật bình luận nếu ID trùng khớp
-                        : newComment, // Giữ nguyên bình luận nếu ID không trùng
-            ),
-        );
-    };
+    const handleEdit = useCallback(
+        async (comment, editedContent) => {
+            setLocalComments(
+                localComments.map(
+                    (newComment) =>
+                        newComment._id === comment._id
+                            ? { ...newComment, content: editedContent } // Cập nhật bình luận nếu ID trùng khớp
+                            : newComment, // Giữ nguyên bình luận nếu ID không trùng
+                ),
+            );
+        },
+        [localComments],
+    ); // Phụ thuộc vào localComments
+
+    // ngày mai set up lại hàm deleted comment
+    const handleDeleted = useCallback(async () => {
+        setShowModal(false);
+        try {
+            if (!currentUser) {
+                navigate('/sign-in');
+                return;
+            }
+            // const res = await fetch(`/api/comment/delete-comment/${newIdDeleted}`, {
+            //     method: 'DELETE',
+            // });
+
+            // if (!res.ok) {
+            //     throw new Error('Delete comment failed');
+            // }
+
+            // await res.json();
+            // Update localComments by filtering out the deleted comment
+
+            await deletedComment(newIdDeleted);
+            setLocalComments((prevComments) =>
+                prevComments.filter((newCommentAfterRemove) => newCommentAfterRemove._id !== newIdDeleted),
+            );
+        } catch (error) {
+            console.log('Error: ' + error);
+        }
+    }, [newIdDeleted, currentUser, navigate, setLocalComments, deletedComment]);
 
     // Cleanup function
     useEffect(() => {
@@ -234,8 +273,45 @@ const CommentSectionComponent = ({ postId }) => {
                             comment={comment}
                             onLike={handleLike}
                             onEdit={handleEdit}
+                            onDeleted={(commentId) => {
+                                setShowModal(true);
+                                setNewIdDeleted(commentId);
+                            }}
                         />
                     ))}
+                    {/* Modal xác nhận xóa */}
+                    <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
+                        <Modal.Header />
+                        <Modal.Body className="p-6 text-center">
+                            <div>
+                                <ExclamationCircleIcon className="h-14 w-14 text-red-500 mb-4 mx-auto" />
+                                <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+                                    Bạn có chắc là muốn xóa bình luận này không?
+                                </h3>
+                                {errorDeleted && (
+                                    <p className="text-red-500 text-sm mb-4">
+                                        {errorDeleted} {/* Hiển thị thông báo lỗi */}
+                                    </p>
+                                )}
+                                <div className="flex justify-between gap-4 mt-6">
+                                    <ButtonComponent
+                                        color="bg-gray-400"
+                                        className="bg-gray-400 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out hover:bg-gray-600"
+                                        onClick={handleDeleted}
+                                    >
+                                        xác nhận
+                                    </ButtonComponent>
+                                    <ButtonComponent
+                                        color="failure"
+                                        className="bg-red-500 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out hover:bg-red-600"
+                                        onClick={() => setShowModal(false)}
+                                    >
+                                        hủy
+                                    </ButtonComponent>
+                                </div>
+                            </div>
+                        </Modal.Body>
+                    </Modal>
                 </>
             )}
         </div>
@@ -246,4 +322,4 @@ CommentSectionComponent.propTypes = {
     postId: PropTypes.string, // Id of the post
 };
 
-export default CommentSectionComponent;
+export default memo(CommentSectionComponent);

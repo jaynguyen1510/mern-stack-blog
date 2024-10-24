@@ -19,5 +19,10 @@ router.put(
   verifyToken,
   CommentController.editComment
 );
+router.delete(
+  "/delete-comment/:commentId",
+  verifyToken,
+  CommentController.deleteComment
+);
 
 export default router;

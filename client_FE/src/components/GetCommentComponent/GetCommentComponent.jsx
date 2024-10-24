@@ -7,7 +7,7 @@ import { useState } from 'react';
 import ButtonComponent from '../ButtonComponent/ButtonComponent';
 import useEditComment from '../../Hooks/useEditComment';
 
-const GetCommentComponent = ({ comment, onLike, onEdit }) => {
+const GetCommentComponent = ({ comment, onLike, onEdit, onDeleted }) => {
     const { currentUser } = useSelector((state) => state.user);
     // Gọi hook để lấy thông tin người dùng
     const userId = comment.userId;
@@ -134,13 +134,22 @@ const GetCommentComponent = ({ comment, onLike, onEdit }) => {
                                                 : `${comment?.numberOfLikes} người đã thích bình luận này`)}
                                     </p>
                                     {currentUser && (currentUser?._id === comment?.userId || currentUser?.isAdmin) && (
-                                        <button
-                                            type="button"
-                                            className="text-gray-400 hover:text-blue-500"
-                                            onClick={handleEditComment}
-                                        >
-                                            Chỉnh sửa
-                                        </button>
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="text-gray-400 hover:text-blue-500"
+                                                onClick={handleEditComment}
+                                            >
+                                                Chỉnh sửa
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="text-gray-400 hover:text-red-500"
+                                                onClick={() => onDeleted(comment._id)}
+                                            >
+                                                Xóa
+                                            </button>
+                                        </>
                                     )}
                                 </div>
                             </>
@@ -157,6 +166,7 @@ GetCommentComponent.propTypes = {
     comment: PropTypes.object.isRequired,
     onLike: PropTypes.func.isRequired,
     onEdit: PropTypes.func.isRequired,
+    onDeleted: PropTypes.func.isRequired,
 };
 
 export default GetCommentComponent;

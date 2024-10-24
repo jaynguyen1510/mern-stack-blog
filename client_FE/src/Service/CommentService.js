@@ -26,8 +26,6 @@ export const getAllComments = async (postId) => {
 };
 
 export const putLike = async (commentId) => {
-    console.log('comment', commentId);
-
     try {
         const likeResponse = await axios.put(
             `${apiUrl}/comment/like-comment/${commentId}`,
@@ -54,6 +52,17 @@ export const editComment = async (commentId, { content }) => {
         return editComment.data;
     } catch (error) {
         console.log('Error edit comments', error);
+        throw error;
+    }
+};
+export const deletedComment = async (commentId) => {
+    try {
+        const deletedComment = await axios.delete(`${apiUrl}/comment/delete-comment/${commentId}`, {
+            withCredentials: true, // Cấu hình để gửi cookie
+        });
+        return deletedComment.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.log('Error delete comments', error);
         throw error;
     }
 };

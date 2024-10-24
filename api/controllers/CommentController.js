@@ -83,4 +83,31 @@ const editComment = async (req, res, next) => {
     );
   }
 };
-export default { createComment, getComment, likeComment, editComment };
+const deleteComment = async (req, res, next) => {
+  const commentId = req.params.commentId;
+  const userId = req.user?.id;
+  const isAdmin = req.user.isAdmin;
+
+  if (!commentId) {
+    return {
+      status: "ERR",
+      success: false,
+      message: "Id bình luận không hợp lệ.",
+    };
+  }
+  const total = { commentId, userId, isAdmin };
+
+  try {
+    const responseDeleteComment = await CommentService.deleteComment(total);
+    return res.status(200).json(responseDeleteComment);
+  } catch (error) {
+    return next(customErrorHandler(res, 500, "Lỗi không thể xóa comment"));
+  }
+};
+export default {
+  createComment,
+  getComment,
+  likeComment,
+  editComment,
+  deleteComment,
+};
