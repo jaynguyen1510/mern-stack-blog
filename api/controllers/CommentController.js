@@ -40,6 +40,16 @@ const getComment = async (req, res, next) => {
     );
   }
 };
+const getAllCommentForAdmin = async (req, res, next) => {
+  try {
+    const commentResponse = await CommentService.getAllCommentForAdmin(req);
+    return res.status(200).json(commentResponse);
+  } catch (error) {
+    return next(
+      customErrorHandler(res, 500, "Không thể tải danh sách bình luận")
+    );
+  }
+};
 const likeComment = async (req, res, next) => {
   const commentId = req.params.commentId;
   const userId = req.user?.id;
@@ -110,4 +120,5 @@ export default {
   likeComment,
   editComment,
   deleteComment,
+  getAllCommentForAdmin,
 };

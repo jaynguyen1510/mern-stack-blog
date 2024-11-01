@@ -169,10 +169,53 @@ const deleteComment = async ({ commentId, userId, isAdmin }) => {
     };
   }
 };
+const getAllCommentForAdmin = async (userId) => {
+  const isAdmin = userId.user.isAdmin;
+
+  try {
+    if (!isAdmin) {
+      return {
+        status: "ERR",
+        success: false,
+        message: "Bạn không có quyền truy cập dữ liệu này",
+      };
+    }
+    const startIndex = parseInt(userId.query.startIndex) || 0;
+    const limit = parseInt(userId.query.limit) || 9;
+    const sorDirection = userId.query.sort === "desc" ? -1 : 1;
+    const getAllComment = await Comments.find({})
+      .sort({ createdAt: sorDirection })
+      .skip(startIndex)
+      .limit(limit);
+    const totalComment = await Comments.countDocuments();
+    const timeNow = new Date();
+    const oneMonthAgo = new Date(
+      timeNow.getFullYear(),
+      timeNow.getMonth() - 1,
+      timeNow.getDate()
+    );
+    const lastMontCreateUser = await Comments.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+    return {
+      status: "OK",
+      success: true,
+      message: "Lấy comment thành công",
+      dataAllComment: {
+        data: getAllComment,
+        totalComment: totalComment,
+        lastMontCreateUser: lastMontCreateUser,
+      },
+    };
+  } catch (error) {
+    console.error("Error getting all comment for admin:", error);
+  }
+};
 export default {
   createComment,
   getComment,
   likeComment,
   editComment,
   deleteComment,
+  getAllCommentForAdmin,
 };

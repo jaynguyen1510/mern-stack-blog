@@ -24,6 +24,20 @@ export const getAllComments = async (postId) => {
         throw error;
     }
 };
+export const getAllCommentAdmin = async (isAdmin, startIndex) => {
+    try {
+        const getComment = await axios.get(
+            `${apiUrl}/comment/get-all-comment?userId=${isAdmin}&startIndex=${startIndex}`,
+            {
+                withCredentials: true, // Cấu hình để gửi cookie
+            },
+        );
+        return getComment.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.log('Error getting comments', error);
+        throw error;
+    }
+};
 
 export const putLike = async (commentId) => {
     try {

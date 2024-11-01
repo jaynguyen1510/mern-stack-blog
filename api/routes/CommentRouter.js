@@ -9,6 +9,11 @@ router.post(
   CommentController.createComment
 );
 router.get("/get-comment/:postId", CommentController.getComment);
+router.get(
+  "/get-all-comment",
+  verifyToken,
+  CommentController.getAllCommentForAdmin
+);
 router.put(
   "/like-comment/:commentId",
   verifyToken,

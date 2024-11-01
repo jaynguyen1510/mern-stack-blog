@@ -195,7 +195,7 @@ const getAllUsers = async (userId) => {
       timeNow.getMonth() - 1,
       timeNow.getDate()
     );
-    const lasMontCreateUser = await User.countDocuments({
+    const lastMontCreateUser = await User.countDocuments({
       createdAt: { $gte: oneMonthAgo },
     });
     const userWithoutPassword = getAllUser.map((user) => {
@@ -210,7 +210,7 @@ const getAllUsers = async (userId) => {
       dataAllUser: {
         data: userWithoutPassword,
         totalUser: totalUser,
-        lasMontCreateUser: lasMontCreateUser,
+        lastMontCreateUser: lastMontCreateUser,
       },
     };
   } catch (error) {
