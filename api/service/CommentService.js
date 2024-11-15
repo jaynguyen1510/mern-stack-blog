@@ -194,7 +194,7 @@ const getAllCommentForAdmin = async (userId) => {
       timeNow.getMonth() - 1,
       timeNow.getDate()
     );
-    const lastMontCreateUser = await Comments.countDocuments({
+    const lastMontCreateComment = await Comments.countDocuments({
       createdAt: { $gte: oneMonthAgo },
     });
     return {
@@ -204,7 +204,7 @@ const getAllCommentForAdmin = async (userId) => {
       dataAllComment: {
         data: getAllComment,
         totalComment: totalComment,
-        lastMontCreateUser: lastMontCreateUser,
+        lastMontCreateComment: lastMontCreateComment,
       },
     };
   } catch (error) {

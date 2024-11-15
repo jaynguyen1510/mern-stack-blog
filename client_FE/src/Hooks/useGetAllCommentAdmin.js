@@ -16,7 +16,7 @@ const useGetAllCommentAdmin = (userIdAdmin) => {
         }
     };
 
-    const getAllUser = async () => {
+    const getAllComment = async () => {
         setGetCommentError(null);
         if (!userIdAdmin) {
             setGetCommentError('Invalid admin user ID');
@@ -47,8 +47,8 @@ const useGetAllCommentAdmin = (userIdAdmin) => {
     };
     // Sử dụng useQuery với object form
     const { isLoading, error } = useQuery({
-        queryKey: ['getAllUser', userIdAdmin],
-        queryFn: getAllUser,
+        queryKey: ['getAllComment', userIdAdmin],
+        queryFn: getAllComment,
         enabled: !!userIdAdmin && !hasFetchedRef.current, // Chỉ cho phép gọi API nếu chưa lấy dữ liệu
     });
 

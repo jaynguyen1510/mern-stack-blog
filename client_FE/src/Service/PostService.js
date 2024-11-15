@@ -67,7 +67,7 @@ export const updatePost = async (postId, userId, data) => {
 };
 export const getPostLimit = async () => {
     try {
-        const res = await axios.get(`${apiUrl}/post/get-all-post?limit=3`);
+        const res = await axios.get(`${apiUrl}/post/get-all-post?limit=5`);
         return res.data;
     } catch (error) {
         console.error('Error get postId :', error);

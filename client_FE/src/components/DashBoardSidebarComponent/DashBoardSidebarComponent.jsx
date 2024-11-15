@@ -1,5 +1,5 @@
 import { Sidebar } from 'flowbite-react';
-import { HiAnnotation, HiArrowSmRight, HiDocumentText, HiUser, HiUserGroup } from 'react-icons/hi';
+import { HiAnnotation, HiArrowSmRight, HiChartPie, HiDocumentText, HiUser, HiUserGroup } from 'react-icons/hi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useLogOut from '../../Hooks/useLogOut';
@@ -27,6 +27,17 @@ const DashBoardSidebarComponent = () => {
     return (
         <Sidebar className="w-full md:w-50">
             <Sidebar.ItemGroup className="flex flex-col gap-1">
+                {currentUser && currentUser?.isAdmin && (
+                    <Sidebar.Item
+                        className="cursor-pointer"
+                        active={tab === 'dash' || !tab}
+                        icon={HiChartPie}
+                        labelColor={'dark'}
+                        onClick={() => navigate('/dashboard?tab=dash')}
+                    >
+                        Dashboard
+                    </Sidebar.Item>
+                )}
                 <Sidebar.Item
                     className="cursor-pointer"
                     active={tab === 'profile'} // Đây sẽ đánh dấu active nếu tab là 'profile'

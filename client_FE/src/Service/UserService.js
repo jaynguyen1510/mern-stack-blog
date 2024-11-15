@@ -87,3 +87,14 @@ export const getUserById = async (userId) => {
         throw error;
     }
 };
+export const getUserLimit = async () => {
+    try {
+        const response = await axios.get(`${apiUrl}/user/get-all-user?limit=5`, {
+            withCredentials: true, // Nếu cần gửi cookie
+        });
+        return response.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.error('Error get all user:', error);
+        throw error;
+    }
+};

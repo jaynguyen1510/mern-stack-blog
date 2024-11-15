@@ -38,6 +38,17 @@ export const getAllCommentAdmin = async (isAdmin, startIndex) => {
         throw error;
     }
 };
+export const getCommentLimit = async () => {
+    try {
+        const resCommentLimit = await axios.get(`${apiUrl}/comment/get-all-comment?limit=5`, {
+            withCredentials: true, // Cấu hình để gửi cookie
+        });
+        return resCommentLimit.data; // Trả về dữ liệu từ response
+    } catch (error) {
+        console.log('Error getting comments', error);
+        throw error;
+    }
+};
 
 export const putLike = async (commentId) => {
     try {
