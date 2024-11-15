@@ -43,11 +43,11 @@ const DashBoardComponent = () => {
     // Combine all loading states into one for the loading component
     const isLoading = isLoadingUserLimit || isLoadingGetPostLimit || isLoadingGetCommentLimit;
 
-    // Display an error message if any of the data fetching has failed
+    // Hiển thị lỗi nếu có, thay vì hiển thị đối tượng lỗi
     const errorMessage =
-        errorUserLimit ||
-        errorGetPostLimit ||
-        errorGetCommentLimit ||
+        errorUserLimit?.message ||
+        errorGetPostLimit?.message ||
+        errorGetCommentLimit?.message ||
         'An unknown error occurred. Please try again later.';
 
     // Show the loading component if any data is still loading
