@@ -1,22 +1,26 @@
 import * as UserService from '../Service/UserService';
 import { useQuery } from '@tanstack/react-query';
-import { useRef } from 'react';
+import { useState } from 'react';
 
 const useGetUserLimit = () => {
-    const hasFetchedRef = useRef(false); // Track if the API has been called
+    const [hasFetched, setHasFetched] = useState(false); // Track fetch state
 
     const fetchUserLimit = async () => {
         try {
-            if (hasFetchedRef.current) return; // Avoid re-fetching if data is already fetched
+            // Avoid refetching if already fetched
+            if (hasFetched) return []; // Return an empty array to avoid undefined
 
-            // Call API to get all users
             const res = await UserService.getUserLimit();
+
             if (res?.status === 'ERR' && res?.success === false) {
                 throw new Error(res.message);
             } else if (res?.status === 'OK' && res?.success === true) {
-                hasFetchedRef.current = true;
-                return res.dataAllUser;
+                setHasFetched(true);
+                return res.dataAllUser || []; // Ensure returning data or empty array
             }
+
+            // Default return if conditions aren't met
+            return [];
         } catch (error) {
             console.error('Error fetching users:', error);
             throw error; // Let react-query handle the error
@@ -30,10 +34,13 @@ const useGetUserLimit = () => {
     } = useQuery({
         queryKey: ['userLimit'],
         queryFn: fetchUserLimit,
-        enabled: !hasFetchedRef.current, // Only enable if data hasn't been fetched
+        enabled: !hasFetched, // Only enable if data hasn't been fetched
     });
 
-    return { errorUserLimit, isLoadingUserLimit, dataUserLimit };
+    // Safe fallback for data if undefined or null
+    const safeDataUserLimit = dataUserLimit ?? []; // Ensure it's never undefined
+
+    return { errorUserLimit, isLoadingUserLimit, dataUserLimit: safeDataUserLimit };
 };
 
 export default useGetUserLimit;

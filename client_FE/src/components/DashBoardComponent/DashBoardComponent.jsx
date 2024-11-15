@@ -27,16 +27,25 @@ const DashBoardComponent = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (currentUser.isAdmin && dataUserLimit && dataGetPostLimit && dataGetCommentLimit) {
-            setUser(dataUserLimit.data);
-            setTotalUser(dataUserLimit.totalUser);
-            setLastMonthUsers(dataUserLimit.lastMontCreateUser);
-            setPost(dataGetPostLimit.data);
-            setTotalPost(dataGetPostLimit.totalPost);
-            setLastMonthPosts(dataGetPostLimit.lastMonthPost);
-            setComment(dataGetCommentLimit.data);
-            setLastMonthComments(dataGetCommentLimit.lastMontCreateComment);
-            setTotalComment(dataGetCommentLimit.totalComment);
+        if (currentUser.isAdmin) {
+            // Check if all necessary data objects are available before setting state
+            if (dataUserLimit && dataUserLimit.data) {
+                setUser(dataUserLimit.data);
+                setTotalUser(dataUserLimit.totalUser);
+                setLastMonthUsers(dataUserLimit.lastMontCreateUser);
+            }
+
+            if (dataGetPostLimit && dataGetPostLimit.data) {
+                setPost(dataGetPostLimit.data);
+                setTotalPost(dataGetPostLimit.totalPost);
+                setLastMonthPosts(dataGetPostLimit.lastMonthPost);
+            }
+
+            if (dataGetCommentLimit && dataGetCommentLimit.data) {
+                setComment(dataGetCommentLimit.data);
+                setLastMonthComments(dataGetCommentLimit.lastMontCreateComment);
+                setTotalComment(dataGetCommentLimit.totalComment);
+            }
         }
     }, [currentUser, dataUserLimit, dataGetPostLimit, dataGetCommentLimit]);
 
