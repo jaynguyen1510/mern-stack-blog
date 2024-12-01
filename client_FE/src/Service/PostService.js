@@ -74,3 +74,12 @@ export const getPostLimit = async () => {
         throw error;
     }
 };
+export const getPostHomePage = async () => {
+    try {
+        const res = await axios.get(`${apiUrl}/post/get-all-post`);
+        return res.data;
+    } catch (error) {
+        console.error('Error get post :', error);
+        throw error;
+    }
+};
