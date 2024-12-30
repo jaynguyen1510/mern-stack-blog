@@ -4,6 +4,7 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../../redux/Theme/ThemeSlice';
+import { useEffect, useState } from 'react';
 import useLogOut from '../../Hooks/useLogOut';
 const HeaderComponent = () => {
     const navigate = useNavigate();
@@ -11,11 +12,35 @@ const HeaderComponent = () => {
     const logout = useLogOut();
     const { currentUser } = useSelector((state) => state.user);
     const { theme } = useSelector((state) => state.theme);
-
+    const [searchTerm, setSearchTerm] = useState('');
     const path = useLocation().pathname;
+    const location = useLocation();
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(location.search);
+        const searchParamFormUrl = urlParams.get('searchTerm');
+
+        if (searchParamFormUrl) {
+            setSearchTerm(searchParamFormUrl);
+        }
+    }, [location.search]);
+
     const handleLogOut = () => {
         console.log('Logging out...'); // Kiểm tra xem sự kiện này có được gọi
         logout(); // Gọi hàm logOut và truyền formData
+    };
+    const handleChangeSearchTerm = (e) => {
+        setSearchTerm(e.target.value);
+    };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const urlParams = new URLSearchParams(location.search);
+
+        urlParams.set('searchTerm', searchTerm);
+
+        const searchQuery = urlParams.toString();
+
+        navigate(`/search?${searchQuery}`); // Truyền query search vào đường dẫn /search
     };
     return (
         <Navbar className="border-b-2">
@@ -28,12 +53,14 @@ const HeaderComponent = () => {
                 </span>
                 Blog
             </div>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <TextInput
                     type="text"
                     placeholder="Tìm kiếm"
                     rightIcon={AiOutlineSearch}
                     className="hidden lg:inline"
+                    value={searchTerm}
+                    onChange={handleChangeSearchTerm}
                 />
             </form>
             <Button className="w-12 h-10 lg:hidden " color="gray" pill>
