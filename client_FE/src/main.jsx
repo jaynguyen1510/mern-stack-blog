@@ -1,11 +1,11 @@
 import App from './routers/App';
 import './index.css';
+import ThemeProvider from './components/ThemeComponent/ThemeComponent';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { store, persistor } from './redux/store'; // Import cả store và persistor
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'; // Import PersistGate
-import ThemeProvider from './components/ThemeComponent/ThemeComponent';
 // import { StrictMode } from 'react';
 
 // Tạo một QueryClient instance
